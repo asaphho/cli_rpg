@@ -4,9 +4,9 @@ from typing import Callable
 class Context:
     """
     Basic Context class for handling contexts like menu, dialog, map, combat encounter, etc.
-    :param parent_context: (Context) The context instance from which this context is entered
-    :param context_type: (str) The type of the context ('map', 'inventory', 'dialog', etc.)
-    :param context_data: (dict) The data specific to this context
+    :param parent_context (Context): The context instance from which this context is entered
+    :param context_type (str): The type of the context ('map', 'inventory', 'dialog', etc.)
+    :param context_data (dict): The data specific to this context
     """
     def __init__(self, parent_context, context_type: str, context_data: dict):
         self._parent_context = parent_context
@@ -30,6 +30,13 @@ class Context:
         print(self.entry_text)
 
     def _generate_choice_handling(self) -> dict[str, Callable[[dict], bool]]:
+        """
+        Should be overridden in all subclasses of Context. This should produce a dictionary whose keys are the
+        choices that are accepted. The corresponding values are functions that take in the current context data,
+        do whatever is supposed to be done by that choice, and then return True if that choice is meant to break the
+        context's loop and exit, False otherwise.
+        :return:
+        """
         return {}
 
     def _handle_choice(self, choice: str, choice_handler: dict[str, Callable[[dict], bool]]) -> bool:
@@ -37,9 +44,17 @@ class Context:
         return func(self.get_context_data())
 
     def print_choices(self) -> None:
+        """
+        Should be overridden in all subclasses of Context
+        :return:
+        """
         return
 
     def enter(self) -> bool:
+        """
+        Main loop of the context. Always called when a context is entered.
+        :return: True
+        """
         exit_loop = False
         choice_handler = self._generate_choice_handling()
         reprint_entry = True
