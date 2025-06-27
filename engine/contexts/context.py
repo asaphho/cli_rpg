@@ -29,19 +29,19 @@ class Context:
     def print_entry_text(self) -> None:
         print(self.entry_text)
 
-    def _generate_choice_handling(self) -> dict[str, Callable[[dict], bool]]:
+    def _generate_choice_handling(self) -> dict[str, Callable]:
         """
         Should be overridden in all subclasses of Context. This should produce a dictionary whose keys are the
-        choices that are accepted. The corresponding values are functions that take in the current context data,
-        do whatever is supposed to be done by that choice, and then return True if that choice is meant to break the
-        context's loop and exit, False otherwise.
+        choices that are accepted. The corresponding values are functions that take in the current context instance and
+        the parent context instance, do whatever is supposed to be done by that choice, and then return True if that
+        choice is meant to break the context's loop and exit, False otherwise.
         :return: bool - True if it exits the context, False if it does not.
         """
         return {}
 
-    def _handle_choice(self, choice: str, choice_handler: dict[str, Callable[[dict], bool]]) -> bool:
+    def _handle_choice(self, choice: str, choice_handler: dict[str, Callable]) -> bool:
         func = choice_handler[choice]
-        return func(self.get_context_data())
+        return func(self, self._parent_context)
 
     def print_choices(self) -> None:
         """
