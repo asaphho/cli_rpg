@@ -48,4 +48,7 @@ class MapContext(Context):
 
         for choice_number in context_data['map_contained_locations']:
             choice_handlers[str(choice_number)] = helper_local_travel(choice_number)
+
+        choice_handlers['back'] = self.exit_context_with_no_action()
+
         return choice_handlers
