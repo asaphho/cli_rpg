@@ -35,7 +35,7 @@ class Context:
         choices that are accepted. The corresponding values are functions that take in the current context data,
         do whatever is supposed to be done by that choice, and then return True if that choice is meant to break the
         context's loop and exit, False otherwise.
-        :return:
+        :return: bool - True if it exits the context, False if it does not.
         """
         return {}
 
