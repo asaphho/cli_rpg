@@ -59,7 +59,7 @@ class Context:
         """
         return
 
-    def enter(self) -> bool:
+    def enter(self, exit_choice: str = 'b') -> bool:
         """
         Main loop of the context. Always called when a context is entered.
         :return: True
@@ -73,6 +73,8 @@ class Context:
                 print('\n')
                 self.print_choices()
             choice_input = input().lower().strip()
+            if choice_input == exit_choice:
+                return False
             if choice_input in choice_handler:
                 exit_loop = self._handle_choice(choice=choice_input, choice_handler=choice_handler)
                 reprint_entry = True
