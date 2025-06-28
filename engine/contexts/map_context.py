@@ -12,7 +12,7 @@ class MapContext(Context):
     ...{
     ...     'map_domain_name': 'Sillytown',
     ...     'player_global_location': 'oldvale_sillytown_inn',
-    ...     'map_level': 'local',
+    ...     'map_level': 'local', # 'world', 'regional', or 'local' only
     ...     'map_locality': 'oldvale_sillytown',
     ...     'map_region': 'oldvale',
     ...     'map_contained_locations':
@@ -50,8 +50,17 @@ class MapContext(Context):
                 return True
             return location_changer
 
-        for choice_number in context_data['map_contained_locations']:
-            choice_handlers[str(choice_number)] = helper_local_travel(choice_number)
+        if context_data['map_level'] in ('local', 'regional'):
+            for choice_number in context_data['map_contained_locations']:
+                choice_handlers[str(choice_number)] = helper_local_travel(choice_number)
+            if context_data['map_level'] == 'local':
+                region: str = context_data['map_region']
+                choice_handlers['r'] = self.create_nested_map_handler(location=region)
+            choice_handlers['w'] = self.create_nested_map_handler(location='world')
+        else:
+            for choice_number in context_data['map_contained_locations']:
+                region: str = context_data['map_contained_locations'][choice_number]['global_location']
+                choice_handlers[str(choice_number)] = self.create_nested_map_handler(location=region)
 
         return choice_handlers
 
@@ -73,3 +82,13 @@ class MapContext(Context):
             return result
 
         return nested_map_handler
+
+    def print_choices(self) -> None:
+        context_data = self.get_context_data()
+        travel_location_keys = sorted(list(context_data['map_contained_locations'].keys()))
+        for choice in travel_location_keys:
+            print(f"{choice}: {context_data['map_contained_locations'][choice]['display_name']}")
+        if context_data['map_level'] == 'local':
+            print("r: Region map")
+        print("w: World map")
+        print("b: Back")
