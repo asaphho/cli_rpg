@@ -29,15 +29,6 @@ class Context:
     def print_entry_text(self) -> None:
         print(self.entry_text)
 
-    def exit_context_with_no_action(self) -> Callable:
-        """
-        Used to exit a context without changing anything. To be called and stored as a value in the choice_handler
-        :return: True
-        """
-        def null_action(*args) -> bool:
-            return True
-        return null_action
-
     def _generate_choice_handling(self) -> dict[str, Callable]:
         """
         Should be overridden in all subclasses of Context. This should produce a dictionary whose keys are the
