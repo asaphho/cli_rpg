@@ -7,6 +7,7 @@ class MapContext(Context):
     Context for when the player opens a map in order to travel
     :param parent_context (Context): Context from which this map context was entered
     :param context_data (dict): The map context data (e.g. below)
+    :param known_locations (dict): All locations in the world known to the player TODO: Define schema
     >>> context_data =
     ...{
     ...     'map_domain_name': 'Sillytown',
@@ -27,11 +28,14 @@ class MapContext(Context):
     ...         }
     ...}
     """
-    def __init__(self, parent_context: Context, context_data: dict):
+    def __init__(self, parent_context: Context, context_data: dict, known_locations: dict):
         super().__init__(parent_context=parent_context,
                          context_type='map',
                          context_data=context_data)
-        self.entry_text = f'Locations in {context_data["map_domain_name"]}'
+        self.entry_text = f'Locations in {context_data["map_domain_name"]}' if context_data['map_level'] == 'local' or\
+                                                                               context_data['map_level'] == 'regional'\
+            else f'Regions in {context_data["map_domain_name"]}'
+        self.known_locations = known_locations
 
     def _generate_choice_handling(self) -> dict[str, Callable[[Context, Context], bool]]:
         context_data = self.get_context_data()
@@ -49,6 +53,23 @@ class MapContext(Context):
         for choice_number in context_data['map_contained_locations']:
             choice_handlers[str(choice_number)] = helper_local_travel(choice_number)
 
-        choice_handlers['back'] = self.exit_context_with_no_action()
-
         return choice_handlers
+
+    def create_map_context_data(self, location: str) -> dict:
+        # TODO: Finish defining
+        map_context_data = {'map_domain_name': location}
+        return map_context_data
+
+    def create_nested_map_handler(self, location: str) -> Callable[[Context, Context], bool]:
+
+        def nested_map_handler(curr_context: Context, parent_context: Context) -> bool:
+            nested_map_context_data = self.create_map_context_data(location)
+            nested_map_context = MapContext(parent_context=curr_context,
+                                            context_data=nested_map_context_data,
+                                            known_locations=self.known_locations)
+            result = nested_map_context.enter()
+            if result:
+                parent_context.context_data['player_global_location'] = curr_context.context_data['player_global_location']
+            return result
+
+        return nested_map_handler
