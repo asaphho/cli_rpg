@@ -8,7 +8,7 @@ class MapContext(Context):
     :param parent_context (Context): Context from which this map context was entered
     :param context_data (dict): The map context data (e.g. below)
     :param known_locations (dict): All locations in the world known to the player TODO: Define schema
-    >>> context_data =
+    >>> context_data = \
     ...{
     ...     'map_domain_name': 'Sillytown',
     ...     'player_global_location': 'oldvale_sillytown_inn',
@@ -25,6 +25,14 @@ class MapContext(Context):
     ...                     'display_name': 'Inn',
     ...                     'global_location': 'oldvale_sillytown_inn'
     ...                }
+    ...         }
+    ...}
+    >>> known_locations = \
+    ...{
+    ...     'world_name': 'mundus',
+    ...     'known_regions':
+    ...         {
+    ...             'oldvale':
     ...         }
     ...}
     """
