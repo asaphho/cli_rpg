@@ -1,4 +1,5 @@
 from engine.contexts.context import Context
+from engine.utils.location_tree import LocationTree
 from typing import Callable
 
 
@@ -7,7 +8,7 @@ class MapContext(Context):
     Context for when the player opens a map in order to travel
     :param parent_context (Context): Context from which this map context was entered
     :param context_data (dict): The map context data (e.g. below)
-    :param known_locations (dict): All locations in the world known to the player TODO: Define schema
+    :param known_locations (LocationTree): LocationTree containing all locations in the world known to the player
     >>> context_data = \
     ...{
     ...     'map_domain_name': 'Sillytown',
@@ -27,16 +28,8 @@ class MapContext(Context):
     ...                }
     ...         }
     ...}
-    >>> known_locations = \
-    ...{
-    ...     'world_name': 'mundus',
-    ...     'known_regions':
-    ...         {
-    ...             'oldvale':
-    ...         }
-    ...}
     """
-    def __init__(self, parent_context: Context, context_data: dict, known_locations: dict):
+    def __init__(self, parent_context: Context, context_data: dict, known_locations: LocationTree):
         super().__init__(parent_context=parent_context,
                          context_type='map',
                          context_data=context_data)
