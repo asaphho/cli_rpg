@@ -23,6 +23,10 @@ class LocationTree:
             raise ValueError('Locality names cannot have underscores.')
         if '_' in first_locality_entrypoint_name:
             raise ValueError('Location names cannot have underscores.')
+        if any([s.strip() == '' for s in (world_display_name, first_region_display_name, first_region_name,
+                                          first_locality_display_name, first_locality_name,
+                                          first_locality_entrypoint_display_name, first_locality_entrypoint_name)]):
+            raise ValueError('Arguments cannot be empty string/whitespace-only.')
         self.world_display_name = world_display_name.strip()
         self.regions: list[list[str]] = [[first_region_name.strip(), first_region_display_name.strip()]]
         self.localities: dict[str, dict[str, str]] = {
