@@ -27,6 +27,8 @@ class LocationTree:
                                           first_locality_display_name, first_locality_name,
                                           first_locality_entrypoint_display_name, first_locality_entrypoint_name)]):
             raise ValueError('Arguments cannot be empty string/whitespace-only.')
+        if first_region_name.strip() == 'world':
+            raise ValueError('Region cannot be named "world".')
         self.world_display_name = world_display_name.strip()
         self.regions: list[list[str]] = [[first_region_name.strip(), first_region_display_name.strip()]]
         self.localities: dict[str, dict[str, str]] = {
@@ -77,6 +79,8 @@ class LocationTree:
                                                     first_locality_display_name, first_locality_entrypoint_name,
                                                     first_locality_entrypoint_display_name)]):
             raise ValueError('Name or display name cannot be empty/whitespace-only.')
+        if region_name.strip() == 'world':
+            raise ValueError('Region cannot be named "world".')
         region_names_and_display_names = self.get_region_names_and_display_names()
         if any([ls[0] == region_name.strip() for ls in region_names_and_display_names]):
             raise ValueError(f'{region_name.strip()} already exists.')
