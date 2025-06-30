@@ -66,8 +66,30 @@ class MapContext(Context):
         return choice_handlers
 
     def create_map_context_data(self, location: str) -> dict:
-        # TODO: Finish defining
-        map_context_data = {'map_domain_name': location}
+        map_context_data = {'player_global_location': self.get_context_data()['player_global_location'],
+                            'map_contained_locations': {}}
+        known_locations: LocationTree = self.known_locations
+        region_names_and_display_names = known_locations.get_region_names_and_display_names()
+        if location == 'world':
+            map_context_data['map_domain_name'] = known_locations.get_world_display_name()
+            map_context_data['map_level'] = 'world'
+            for i in range(1, len(region_names_and_display_names) + 1):
+                map_context_data['map_contained_locations'][i] = {'display_name': region_names_and_display_names[i-1][1],
+                                                                  'global_location': region_names_and_display_names[i-1][0]}
+        else:
+            for ls in region_names_and_display_names:
+                if ls[0] == location:
+                    map_context_data['map_domain_name'] = ls[1]
+                    break
+            map_context_data['map_level'] = 'regional'
+            map_context_data['map_region'] = location
+            i = 1
+            localities = known_locations.get_localities()
+            for locality in localities:
+                if locality.startswith(f'{location}_'):
+                    map_context_data['map_contained_locations'][i] = {'display_name': localities[locality]['display_name'],
+                                                                      'global_location': localities[locality]['entrypoint_global_location']}
+                    i += 1
         return map_context_data
 
     def create_nested_map_handler(self, location: str) -> Callable[[Context, Context], bool]:
