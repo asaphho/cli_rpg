@@ -39,7 +39,7 @@ class LocationTree:
                 }
         }
 
-        self.locations: list[list[str]] = [['_'.join(
+        self.lowest_level_locations: list[list[str]] = [['_'.join(
             [first_region_name.strip(), first_locality_name.strip(), first_locality_entrypoint_name.strip()]),
             first_locality_entrypoint_display_name.strip()]]
 
@@ -59,7 +59,7 @@ class LocationTree:
         return list(self.get_localities().keys())
 
     def get_lowest_level_locations(self) -> list[list[str]]:
-        return self.locations
+        return self.lowest_level_locations
 
     def add_region(self, region_name: str,
                    region_display_name: str,
@@ -90,7 +90,7 @@ class LocationTree:
             'entrypoint_global_location': entrypoint_global_location,
             'entrypoint_display_name': first_locality_entrypoint_display_name.strip()
         }
-        self.locations.append([entrypoint_global_location, first_locality_entrypoint_display_name.strip()])
+        self.lowest_level_locations.append([entrypoint_global_location, first_locality_entrypoint_display_name.strip()])
 
     def add_locality(self, locality_global_location: str,
                      locality_display_name: str,
@@ -121,4 +121,4 @@ class LocationTree:
             'entrypoint_global_location': entrypoint_global_location,
             'entrypoint_display_name': entrypoint_display_name.strip()
         }
-        self.locations.append([entrypoint_global_location, entrypoint_display_name.strip()])
+        self.lowest_level_locations.append([entrypoint_global_location, entrypoint_display_name.strip()])
