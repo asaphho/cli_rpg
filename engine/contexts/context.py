@@ -57,9 +57,9 @@ class Context:
         """
         exit_loop = False
         choice_handler = self._generate_choice_handling()
-        reprint_entry = True
+        rerun_entry = True
         while not exit_loop:
-            if reprint_entry:
+            if rerun_entry:
                 choice_handler = self._generate_choice_handling()
                 self.print_entry_text()
                 print('\n')
@@ -69,8 +69,8 @@ class Context:
                 return False
             if choice_input in choice_handler:
                 exit_loop = self._handle_choice(choice=choice_input, choice_handler=choice_handler)
-                reprint_entry = True
+                rerun_entry = True
             else:
                 print('Input not recognized.')
-                reprint_entry = False
+                rerun_entry = False
         return True
