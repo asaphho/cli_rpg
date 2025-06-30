@@ -60,6 +60,7 @@ class Context:
         reprint_entry = True
         while not exit_loop:
             if reprint_entry:
+                choice_handler = self._generate_choice_handling()
                 self.print_entry_text()
                 print('\n')
                 self.print_choices()
