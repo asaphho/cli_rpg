@@ -185,6 +185,9 @@ class LocationTree:
         if (location_level := len(global_location.split('_'))) not in (1, 2, 3):
             raise ValueError('Cannot parse global_location: Too many underscores.')
         elif location_level == 1:
+            if global_location.strip() == 'world':
+                self.world_display_name = new_display_name.strip()
+                return
             region = global_location.strip()
             if region not in self.get_region_names():
                 raise ValueError(f'Region {region} does not exist.')
