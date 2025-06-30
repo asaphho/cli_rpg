@@ -95,14 +95,8 @@ class MapContext(Context):
     def create_nested_map_handler(self, location: str) -> Callable[[Context, Context], bool]:
 
         def nested_map_handler(curr_context: Context, parent_context: Context) -> bool:
-            nested_map_context_data = self.create_map_context_data(location)
-            nested_map_context = MapContext(parent_context=curr_context,
-                                            context_data=nested_map_context_data,
-                                            known_locations=self.known_locations)
-            result = nested_map_context.enter()
-            if result:
-                parent_context.context_data['player_global_location'] = curr_context.context_data['player_global_location']
-            return result
+            curr_context.context_data = self.create_map_context_data(location)
+            return False
 
         return nested_map_handler
 
