@@ -21,10 +21,10 @@ class Context:
         return self.context_data
 
     def get_parent_context_type(self) -> str:
-        return self._parent_context.get_context_type()
+        return self._parent_context.get_context_type() if self._parent_context is not None else None
 
     def get_parent_context_data(self) -> dict:
-        return self._parent_context.get_context_data()
+        return self._parent_context.get_context_data() if self._parent_context is not None else {}
 
     def print_entry_text(self) -> None:
         print(self.entry_text)
