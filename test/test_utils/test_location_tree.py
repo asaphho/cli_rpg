@@ -2,7 +2,7 @@ from engine.utils.location_tree import LocationTree
 
 
 def compare_lists(list1: list[list[str]], list2: list[list[str]]) -> None:
-    assert sorted(list1, key=lambda x: x[0]) == sorted(list2, key=lambda x:x[0])
+    assert sorted(list1, key=lambda x: x[0]) == sorted(list2, key=lambda x: x[0])
 
 
 def test_location_tree_initialization():
@@ -55,4 +55,32 @@ def test_add_region():
         }
     }
     expected_lowest_level_locations = [['eastmarch_bridgefort_gates', 'Bridgefort Gates'], ['westmarch_skirge_square', 'Town Square']]
+    compare_lists(location_tree.get_lowest_level_locations(), expected_lowest_level_locations)
+
+
+def test_add_locality():
+    location_tree = LocationTree(world_display_name='Mundus',
+                                 first_region_display_name='Eastmarch',
+                                 first_region_name='eastmarch',
+                                 first_locality_display_name='Bridgefort',
+                                 first_locality_name='bridgefort',
+                                 first_locality_entrypoint_display_name='Bridgefort Gates',
+                                 first_locality_entrypoint_name='gates')
+    location_tree.add_locality(locality_global_location='eastmarch_woodshire',
+                               locality_display_name='Woodshire',
+                               entrypoint_name='fields',
+                               entrypoint_display_name='Woodshire Fields')
+    assert location_tree.get_localities() == {
+        'eastmarch_bridgefort': {
+            'display_name': 'Bridgefort',
+            'entrypoint_global_location': 'eastmarch_bridgefort_gates',
+            'entrypoint_display_name': 'Bridgefort Gates'
+        },
+        'eastmarch_woodshire': {
+            'display_name': 'Woodshire',
+            'entrypoint_global_location': 'eastmarch_woodshire_fields',
+            'entrypoint_display_name': 'Woodshire Fields'
+        }
+    }
+    expected_lowest_level_locations = [['eastmarch_bridgefort_gates', 'Bridgefort Gates'], ['eastmarch_woodshire_fields', 'Woodshire Fields']]
     compare_lists(location_tree.get_lowest_level_locations(), expected_lowest_level_locations)
