@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="27.1.6" pages="2">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="27.2.0" pages="2">
   <diagram name="Context" id="ZuPhsb1y3e9TiBL3zn6G">
     <mxGraphModel dx="1412" dy="743" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
       <root>
@@ -61,16 +61,16 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="fNcoDTf3FBal0cu_F0-P-1" value="GameContext" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="430" y="550" width="460" height="300" as="geometry" />
+          <mxGeometry x="430" y="550" width="360" height="300" as="geometry" />
         </mxCell>
-        <mxCell id="fNcoDTf3FBal0cu_F0-P-2" value="context_data: dict (Game state)&lt;div&gt;entry_text_directory: dict[str, str]&lt;/div&gt;&lt;div&gt;entry_text_overrides: dict[str, str]&lt;/div&gt;&lt;div&gt;default_choice_handler_generator: Callable[[dict (game state)], choice handler dict]&lt;/div&gt;&lt;div&gt;choice_handler_overrides: dict[str, choice handler generator]&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="fNcoDTf3FBal0cu_F0-P-1" vertex="1">
-          <mxGeometry y="26" width="460" height="94" as="geometry" />
+        <mxCell id="fNcoDTf3FBal0cu_F0-P-2" value="context_data: dict (Game state)&lt;div&gt;entry_text_directory: dict[str, str]&lt;/div&gt;&lt;div&gt;entry_text_overrides: dict[str, str]&lt;/div&gt;&lt;div&gt;default_choice_handler_generator: ChoiceHandlerGenerator&lt;/div&gt;&lt;div&gt;choice_handler_overrides: dict[str, ChoiceHandlerGenerator]&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="fNcoDTf3FBal0cu_F0-P-1" vertex="1">
+          <mxGeometry y="26" width="360" height="94" as="geometry" />
         </mxCell>
         <mxCell id="fNcoDTf3FBal0cu_F0-P-3" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="fNcoDTf3FBal0cu_F0-P-1" vertex="1">
-          <mxGeometry y="120" width="460" height="8" as="geometry" />
+          <mxGeometry y="120" width="360" height="8" as="geometry" />
         </mxCell>
         <mxCell id="fNcoDTf3FBal0cu_F0-P-4" value="print_entry_text(): None&lt;div&gt;_generate_choice_handling(): dict&lt;/div&gt;&lt;div&gt;print_choices(): None&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="fNcoDTf3FBal0cu_F0-P-1" vertex="1">
-          <mxGeometry y="128" width="460" height="172" as="geometry" />
+          <mxGeometry y="128" width="360" height="172" as="geometry" />
         </mxCell>
         <mxCell id="fNcoDTf3FBal0cu_F0-P-5" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.279;exitY=0.988;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="1E0RZPyvyATiVvUXbc4v-4" target="fNcoDTf3FBal0cu_F0-P-1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -78,9 +78,15 @@
             <mxPoint x="690" y="570" as="targetPoint" />
             <Array as="points">
               <mxPoint x="387" y="520" />
-              <mxPoint x="660" y="520" />
+              <mxPoint x="610" y="520" />
             </Array>
           </mxGeometry>
+        </mxCell>
+        <mxCell id="Kq5RWJM3h-QykSQ_Tt0N-1" value="ChoiceHandlerWithDisplay: dict[str, tuple[str, Callable[[Context, Context], bool]]]" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="615" y="440" width="450" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Kq5RWJM3h-QykSQ_Tt0N-2" value="ChoiceHandlerGenerator: Callable[[dict], ChoiceHandlerWithDisplay]" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="615" y="478" width="390" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
