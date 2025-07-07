@@ -99,3 +99,30 @@ def test_add_lowest_level_location():
     expected_lowest_level_locations = [['eastmarch_bridgefort_gates', 'Bridgefort Gates'],
                                        ['eastmarch_bridgefort_keep', 'Bridgefort Keep']]
     compare_lists(location_tree.get_lowest_level_locations(), expected_lowest_level_locations)
+
+
+def test_remove_region():
+    location_tree = LocationTree(world_display_name='Mundus',
+                                 first_region_display_name='Eastmarch',
+                                 first_region_name='eastmarch',
+                                 first_locality_display_name='Bridgefort',
+                                 first_locality_name='bridgefort',
+                                 first_locality_entrypoint_display_name='Bridgefort Gates',
+                                 first_locality_entrypoint_name='gates')
+    location_tree.add_region(region_name='westmarch',
+                             region_display_name='Westmarch',
+                             first_locality_name='skirge',
+                             first_locality_display_name='Skirge',
+                             first_locality_entrypoint_name='square',
+                             first_locality_entrypoint_display_name='Town Square')
+    location_tree.remove_region('eastmarch')
+    assert location_tree.get_region_names() == ['westmarch']
+    assert location_tree.get_region_names_and_display_names() == [['westmarch', 'Westmarch']]
+    assert location_tree.get_localities() == {
+        'westmarch_skirge': {
+            'display_name': 'Skirge',
+            'entrypoint_global_location': 'westmarch_skirge_square',
+            'entrypoint_display_name': 'Town Square'
+        }
+    }
+    assert location_tree.get_lowest_level_locations() == [['westmarch_skirge_square', 'Town Square']]
