@@ -126,3 +126,62 @@ def test_remove_region():
         }
     }
     assert location_tree.get_lowest_level_locations() == [['westmarch_skirge_square', 'Town Square']]
+
+
+def test_remove_locality():
+    location_tree = LocationTree(world_display_name='Mundus',
+                                 first_region_display_name='Eastmarch',
+                                 first_region_name='eastmarch',
+                                 first_locality_display_name='Bridgefort',
+                                 first_locality_name='bridgefort',
+                                 first_locality_entrypoint_display_name='Bridgefort Gates',
+                                 first_locality_entrypoint_name='gates')
+    location_tree.add_locality(locality_global_location='eastmarch_woodshire',
+                               locality_display_name='Woodshire',
+                               entrypoint_name='fields',
+                               entrypoint_display_name='Woodshire Fields')
+    location_tree.remove_locality(locality_global_location='eastmarch_bridgefort')
+    assert location_tree.get_localities() == {
+        'eastmarch_woodshire': {
+            'display_name': 'Woodshire',
+            'entrypoint_global_location': 'eastmarch_woodshire_fields',
+            'entrypoint_display_name': 'Woodshire Fields'
+        }
+    }
+    assert location_tree.get_lowest_level_locations() == [['eastmarch_woodshire_fields', 'Woodshire Fields']]
+
+
+def test_change_display_name():
+    location_tree = LocationTree(world_display_name='Mundus',
+                                 first_region_display_name='Eastmarch',
+                                 first_region_name='eastmarch',
+                                 first_locality_display_name='Bridgefort',
+                                 first_locality_name='bridgefort',
+                                 first_locality_entrypoint_display_name='Bridgefort Gates',
+                                 first_locality_entrypoint_name='gates')
+    location_tree.change_display_name(global_location='world', new_display_name='Middle Earth')
+    assert location_tree.world_display_name == 'Middle Earth'
+    location_tree.change_display_name(global_location='eastmarch', new_display_name='The East Marches')
+    assert location_tree.get_region_names() == ['eastmarch']
+    assert location_tree.get_region_names_and_display_names() == [['eastmarch', 'The East Marches']]
+    location_tree.change_display_name(global_location='eastmarch_bridgefort', new_display_name='Bridgefort Town')
+    assert location_tree.get_localities() == {
+        'eastmarch_bridgefort':
+        {'display_name': 'Bridgefort Town',
+         'entrypoint_global_location': 'eastmarch_bridgefort_gates',
+         'entrypoint_display_name': 'Bridgefort Gates'}
+    }
+    location_tree.change_display_name(global_location='eastmarch_bridgefort_gates',
+                                      new_display_name='Gates of Bridgefort')
+    # assert location_tree.get_localities() == {
+    #     'eastmarch_brdigefort': {
+    #         'display_name': 'Bridgefort Town',
+    #         'entrypoint_global_location': 'eastmarch_bridgefort_gates',
+    #         'entrypoint_display_name': 'Gates of Bridgefort'
+    #     }
+    # }
+    assert list(location_tree.get_localities().keys()) == ['eastmarch_bridgefort']
+    assert location_tree.get_localities()['eastmarch_bridgefort']['display_name'] == 'Bridgefort Town'
+    assert location_tree.get_localities()['eastmarch_bridgefort']['entrypoint_global_location'] == 'eastmarch_bridgefort_gates'
+    assert location_tree.get_localities()['eastmarch_bridgefort']['entrypoint_display_name'] == 'Gates of Bridgefort'
+    assert location_tree.get_lowest_level_locations() == [['eastmarch_bridgefort_gates', 'Gates of Bridgefort']]
