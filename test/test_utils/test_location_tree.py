@@ -84,3 +84,18 @@ def test_add_locality():
     }
     expected_lowest_level_locations = [['eastmarch_bridgefort_gates', 'Bridgefort Gates'], ['eastmarch_woodshire_fields', 'Woodshire Fields']]
     compare_lists(location_tree.get_lowest_level_locations(), expected_lowest_level_locations)
+
+
+def test_add_lowest_level_location():
+    location_tree = LocationTree(world_display_name='Mundus',
+                                 first_region_display_name='Eastmarch',
+                                 first_region_name='eastmarch',
+                                 first_locality_display_name='Bridgefort',
+                                 first_locality_name='bridgefort',
+                                 first_locality_entrypoint_display_name='Bridgefort Gates',
+                                 first_locality_entrypoint_name='gates')
+    location_tree.add_lowest_level_location(global_location='eastmarch_bridgefort_keep',
+                                            display_name='Bridgefort Keep')
+    expected_lowest_level_locations = [['eastmarch_bridgefort_gates', 'Bridgefort Gates'],
+                                       ['eastmarch_bridgefort_keep', 'Bridgefort Keep']]
+    compare_lists(location_tree.get_lowest_level_locations(), expected_lowest_level_locations)
