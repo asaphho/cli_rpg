@@ -185,3 +185,35 @@ def test_change_display_name():
     assert location_tree.get_localities()['eastmarch_bridgefort']['entrypoint_global_location'] == 'eastmarch_bridgefort_gates'
     assert location_tree.get_localities()['eastmarch_bridgefort']['entrypoint_display_name'] == 'Gates of Bridgefort'
     assert location_tree.get_lowest_level_locations() == [['eastmarch_bridgefort_gates', 'Gates of Bridgefort']]
+
+
+def test_change_locality_entrypoint():
+    location_tree = LocationTree(world_display_name='Mundus',
+                                 first_region_display_name='Eastmarch',
+                                 first_region_name='eastmarch',
+                                 first_locality_display_name='Bridgefort',
+                                 first_locality_name='bridgefort',
+                                 first_locality_entrypoint_display_name='Bridgefort Gates',
+                                 first_locality_entrypoint_name='gates')
+    location_tree.add_lowest_level_location(global_location='eastmarch_bridgefort_keep',
+                                            display_name='Bridgefort Keep')
+    location_tree.change_locality_entrypoint(locality_global_location='eastmarch_bridgefort',
+                                             new_entrypoint_global_location='eastmarch_bridgefort_keep')
+    assert location_tree.get_localities()['eastmarch_bridgefort']['entrypoint_global_location'] == 'eastmarch_bridgefort_keep'
+    assert location_tree.get_localities()['eastmarch_bridgefort']['entrypoint_display_name'] == 'Bridgefort Keep'
+
+
+def test_remove_lowest_level_location():
+    location_tree = LocationTree(world_display_name='Mundus',
+                                 first_region_display_name='Eastmarch',
+                                 first_region_name='eastmarch',
+                                 first_locality_display_name='Bridgefort',
+                                 first_locality_name='bridgefort',
+                                 first_locality_entrypoint_display_name='Bridgefort Gates',
+                                 first_locality_entrypoint_name='gates')
+    location_tree.add_lowest_level_location(global_location='eastmarch_bridgefort_keep',
+                                            display_name='Bridgefort Keep')
+    location_tree.change_locality_entrypoint(locality_global_location='eastmarch_bridgefort',
+                                             new_entrypoint_global_location='eastmarch_bridgefort_keep')
+    location_tree.remove_lowest_level_location(global_location='eastmarch_bridgefort_gates')
+    assert location_tree.get_lowest_level_locations() == [['eastmarch_bridgefort_keep', 'Bridgefort Keep']]
