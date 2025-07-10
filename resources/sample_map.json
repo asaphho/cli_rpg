@@ -1,0 +1,63 @@
+{
+    "world_name": "Mundus",
+    "regions": {
+        "eastmarch": {
+            "display_name": "Eastmarch",
+            "localities": {
+                "bridgefort": {
+                    "display_name": "Bridgefort",
+                    "locations": {
+                        "entrypoint": "gates",
+                        "entrypoint_display_name": "Bridgefort Gates",
+                        "other_locations": {
+                            "square": {
+                                "display_name": "Town Square"
+                            }
+                        }
+                    }
+                },
+                "darkpass": {
+                    "display_name": "Dark Pass",
+                    "locations": {
+                        "entrypoint": "jaggedpassage",
+                        "entrypoint_display_name": "The Jagged Passage",
+                        "other_locations": {
+                            "deadgully": {
+                                "display_name": "Dead Gully"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "westmarch": {
+            "display_name": "Westmarch",
+            "localities": {
+                "woodshire": {
+                    "display_name": "Woodshire",
+                    "locations": {
+                        "entrypoint": "gates",
+                        "entrypoint_display_name": "Woodshire Gates",
+                        "other_locations": {
+                            "townhall": {
+                                "display_name": "Town Hall"
+                            }
+                        }
+                    }
+                },
+                "castlebragg": {
+                    "display_name": "Castle Bragg",
+                    "locations": {
+                        "entrypoint": "gates",
+                        "entrypoint_display_name": "Castle Bragg Gates",
+                        "other_locations": {
+                            "tower": {
+                                "display_name": "Castle Bragg Tower"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
