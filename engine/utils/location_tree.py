@@ -1,3 +1,6 @@
+from typing import Union
+
+
 class LocationTree:
     """
 	Object to store and retrieve information on regions, localities, locations within localities
@@ -139,7 +142,8 @@ class LocationTree:
             raise ValueError(f'Locality {locality} does not exist in region {region}.')
         if location_name.strip() == '' or display_name.strip() == '':
             raise ValueError('Location name or display name cannot be empty.')
-        display_names_in_locality = [ls[1] for ls in self.get_lowest_level_locations() if ls[0].startswith(f'{region}_{locality}_')]
+        display_names_in_locality = [ls[1] for ls in self.get_lowest_level_locations() if
+                                     ls[0].startswith(f'{region}_{locality}_')]
         if display_name.strip() in display_names_in_locality:
             raise ValueError(f'Display name {display_name.strip()} in {region}_{locality} already taken.')
         self.lowest_level_locations.append(['_'.join([region, locality, location_name]), display_name.strip()])
@@ -154,8 +158,9 @@ class LocationTree:
         for locality in localities:
             if locality.startswith(f'{region_name.strip()}_'):
                 self.localities.pop(locality)
-        self.lowest_level_locations: list[list[str]] = list(filter(lambda x: not x[0].startswith(f'{region_name.strip()}_'),
-                                                                   self.lowest_level_locations))
+        self.lowest_level_locations: list[list[str]] = list(
+            filter(lambda x: not x[0].startswith(f'{region_name.strip()}_'),
+                   self.lowest_level_locations))
 
     def remove_locality(self, locality_global_location: str) -> None:
         localities: list[str] = self.get_locality_global_locations()
@@ -242,6 +247,78 @@ class LocationTree:
             if ls[0] == new_entrypoint_global_location.strip():
                 new_entrypoint_display_name = ls[1]
                 break
-        self.localities[locality_global_location.strip()]['entrypoint_global_location'] = new_entrypoint_global_location.strip()
+        self.localities[locality_global_location.strip()][
+            'entrypoint_global_location'] = new_entrypoint_global_location.strip()
         self.localities[locality_global_location.strip()]['entrypoint_display_name'] = new_entrypoint_display_name
 
+    def export_world_map(self) -> dict[str, Union[str, dict]]:
+        map_data = {'world_name': self.world_display_name, 'regions': {}}
+        all_localities = self.get_localities()
+        all_lowest_level_locations = self.get_lowest_level_locations()
+        for region, display_name in self.get_region_names_and_display_names():
+            map_data['regions'][region] = {'display_name': display_name, 'localities': {}}
+            localities_in_region: list[str] = list(
+                filter(lambda x: x.startswith(f'{region}_'), list(all_localities.keys())))
+            for locality in localities_in_region:
+                locality_short_name = locality.split('_', maxsplit=1)[1]
+                locality_display_name = all_localities[locality]['display_name']
+                locality_entrypoint = all_localities[locality]['entrypoint_global_location'].split('_')[-1]
+                entrypoint_display_name = all_localities[locality]['entrypoint_display_name']
+                locality_data = {'display_name': locality_display_name,
+                                 'locations': {'entrypoint': locality_entrypoint,
+                                               'entrypoint_display_name': entrypoint_display_name},
+                                 'other_locations': {}}
+                locations_in_locality: list[list[str]] = list(filter(lambda x: x[0].startswith(f'{locality}_'),
+                                                                     all_lowest_level_locations))
+                for location, location_display_name in locations_in_locality:
+                    location_short_name = location.split('_')[-1]
+                    if location_short_name == locality_entrypoint:
+                        continue
+                    locality_data['other_locations'][location_short_name] = {'display_name': location_display_name}
+                map_data['regions'][region]['localities'][locality_short_name] = locality_data
+        return map_data
+
+
+def map_from_json(map_json: dict[str, Union[str, dict]]) -> LocationTree:
+    world_name = map_json['world_name']
+    regions = list(map_json['regions'].keys())
+    first_region = regions[0]
+    all_locality_global_locations: list[str] = []
+    for region in regions:
+        region_data: dict[str, Union[str, dict]] = map_json['regions'][region]
+        for locality in region_data['localities'].keys():
+            all_locality_global_locations.append(f'{region}_{locality}')
+    first_locality: str = list(filter(lambda x: x.startswith(f'{region}_'), all_locality_global_locations))[0]
+    first_region_data: dict[str, Union[str, dict]] = map_json['regions'][first_region]
+    first_locality_data: dict[str, Union[str, dict]] = first_region_data['localities'][first_locality.split('_')[1]]
+    entrypoint_short_name: str = first_locality_data['locations']['entrypoint']
+    entrypoint_display_name: str = first_locality_data['locations']['entrypoint_display_name']
+    location_tree = LocationTree(world_display_name=world_name,
+                                 first_region_display_name=first_region_data['display_name'],
+                                 first_region_name=first_region,
+                                 first_locality_display_name=first_locality_data['display_name'],
+                                 first_locality_name=first_locality.split('_')[1],
+                                 first_locality_entrypoint_name=entrypoint_short_name,
+                                 first_locality_entrypoint_display_name=entrypoint_display_name)
+    other_locations_in_first_locality: dict[str, dict[str, str]] = first_locality_data['locations']['other_locations']
+    for location in other_locations_in_first_locality:
+        location_tree.add_lowest_level_location(global_location=f'{first_locality}_{location}',
+                                                display_name=other_locations_in_first_locality[location]['display_name'])
+
+    def add_locality_to_tree(loc_tree: LocationTree, locality_global_location: str, locality_data: dict[str, Union[str, dict]]) -> None:
+        display_name: str = locality_data['display_name']
+        entrypoint_name: str = locality_data['locations']['entrypoint']
+        entrypoint_display: str = locality_data['locations']['entrypoint_display_name']
+        loc_tree.add_locality(locality_global_location=locality_global_location,
+                              locality_display_name=display_name,
+                              entrypoint_name=entrypoint_name,
+                              entrypoint_display_name=entrypoint_display)
+        other_locations: dict[str, dict[str, str]] = locality_data['locations']['other_locations']
+        for loc in other_locations:
+            loc_tree.add_lowest_level_location(global_location=f'{locality_global_location}_{loc}',
+                                               display_name=other_locations[loc]['display_name'])
+
+    def add_region_to_tree(loc_tree: LocationTree, region_name: str, rgn_data: dict[str, Union[str, dict]]) -> None:
+        region_display_name: str = rgn_data['display_name']
+
+    return location_tree
