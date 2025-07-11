@@ -266,15 +266,15 @@ class LocationTree:
                 entrypoint_display_name = all_localities[locality]['entrypoint_display_name']
                 locality_data = {'display_name': locality_display_name,
                                  'locations': {'entrypoint': locality_entrypoint,
-                                               'entrypoint_display_name': entrypoint_display_name},
-                                 'other_locations': {}}
+                                               'entrypoint_display_name': entrypoint_display_name,
+                                               'other_locations': {}}}
                 locations_in_locality: list[list[str]] = list(filter(lambda x: x[0].startswith(f'{locality}_'),
                                                                      all_lowest_level_locations))
                 for location, location_display_name in locations_in_locality:
                     location_short_name = location.split('_')[-1]
                     if location_short_name == locality_entrypoint:
                         continue
-                    locality_data['other_locations'][location_short_name] = {'display_name': location_display_name}
+                    locality_data['locations']['other_locations'][location_short_name] = {'display_name': location_display_name}
                 map_data['regions'][region]['localities'][locality_short_name] = locality_data
         return map_data
 
@@ -288,7 +288,7 @@ def map_from_json(map_json: dict[str, Union[str, dict]]) -> LocationTree:
         region_data: dict[str, Union[str, dict]] = map_json['regions'][region]
         for locality in region_data['localities'].keys():
             all_locality_global_locations.append(f'{region}_{locality}')
-    first_locality: str = list(filter(lambda x: x.startswith(f'{region}_'), all_locality_global_locations))[0]
+    first_locality: str = list(filter(lambda x: x.startswith(f'{first_region}_'), all_locality_global_locations))[0]
     first_region_data: dict[str, Union[str, dict]] = map_json['regions'][first_region]
     first_locality_data: dict[str, Union[str, dict]] = first_region_data['localities'][first_locality.split('_')[1]]
     entrypoint_short_name: str = first_locality_data['locations']['entrypoint']
@@ -303,9 +303,11 @@ def map_from_json(map_json: dict[str, Union[str, dict]]) -> LocationTree:
     other_locations_in_first_locality: dict[str, dict[str, str]] = first_locality_data['locations']['other_locations']
     for location in other_locations_in_first_locality:
         location_tree.add_lowest_level_location(global_location=f'{first_locality}_{location}',
-                                                display_name=other_locations_in_first_locality[location]['display_name'])
+                                                display_name=other_locations_in_first_locality[location][
+                                                    'display_name'])
 
-    def add_locality_to_tree(loc_tree: LocationTree, locality_global_location: str, locality_data: dict[str, Union[str, dict]]) -> None:
+    def add_locality_to_tree(loc_tree: LocationTree, locality_global_location: str,
+                             locality_data: dict[str, Union[str, dict]]) -> None:
         display_name: str = locality_data['display_name']
         entrypoint_name: str = locality_data['locations']['entrypoint']
         entrypoint_display: str = locality_data['locations']['entrypoint_display_name']
@@ -320,5 +322,39 @@ def map_from_json(map_json: dict[str, Union[str, dict]]) -> LocationTree:
 
     def add_region_to_tree(loc_tree: LocationTree, region_name: str, rgn_data: dict[str, Union[str, dict]]) -> None:
         region_display_name: str = rgn_data['display_name']
+        localities_in_region: list[str] = list(rgn_data['localities'].keys())
+        first_locality_short_name = localities_in_region[0]
+        first_locality_info: dict[str, Union[str, dict]] = rgn_data['localities'][first_locality_short_name]
+        first_locality_display_name: str = first_locality_info['display_name']
+        entrypoint: str = first_locality_info['locations']['entrypoint']
+        entrypoint_display: str = first_locality_info['locations']['entrypoint_display_name']
+        other_locations: dict[str, dict[str, str]] = first_locality_info['locations']['other_locations']
+        loc_tree.add_region(region_name=region_name,
+                            region_display_name=region_display_name,
+                            first_locality_name=first_locality_short_name,
+                            first_locality_display_name=first_locality_display_name,
+                            first_locality_entrypoint_name=entrypoint,
+                            first_locality_entrypoint_display_name=entrypoint_display)
+        for locn in other_locations:
+            loc_tree.add_lowest_level_location(global_location=f'{region_name}_{first_locality_short_name}_{locn}',
+                                               display_name=other_locations[locn]['display_name'])
+        for locality_name in localities_in_region:
+            if locality_name == first_locality_short_name:
+                continue
+            locality_data: dict[str, Union[str, dict]] = rgn_data['localities'][locality_name]
+            add_locality_to_tree(loc_tree=loc_tree, locality_global_location=f'{region_name}_{locality_name}',
+                                 locality_data=locality_data)
+
+    for rgn in regions:
+        if rgn == first_region:
+            first_region_locality_short_names: list[str] = list(first_region_data['localities'].keys())
+            for loc in first_region_locality_short_names:
+                if loc != first_locality.split('_')[1]:
+                    add_locality_to_tree(loc_tree=location_tree,
+                                         locality_global_location=f'{rgn}_{loc}',
+                                         locality_data=first_region_data['localities'][loc])
+        else:
+            region_info: dict[str, Union[str, dict]] = map_json['regions'][rgn]
+            add_region_to_tree(loc_tree=location_tree, region_name=rgn, rgn_data=region_info)
 
     return location_tree
