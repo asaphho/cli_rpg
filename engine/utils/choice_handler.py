@@ -51,11 +51,11 @@ class ChoiceHandler:
         numbered_choices: list[int] = list(range(1, self._max_choice_number + 1))
         for n in numbered_choices:
             display: str = self._choices[str(n)][0]
-            print(f'{n}. {display}')
+            print(f'{n}: {display}')
         non_reserved_letters: list[str] = [letter for letter in self._choice_letters if letter not in
                                            self.reserved_choices.keys()]
         for letter in non_reserved_letters:
             display: str = self._choices[letter][0]
-            print(f'{letter}. {display}')
+            print(f'{letter}: {display}')
         for reserved in self.reserved_choices:
-            print(f'{reserved}. {self.reserved_choices[reserved]}')
+            print(f'{reserved}: {self.reserved_choices[reserved]}')
