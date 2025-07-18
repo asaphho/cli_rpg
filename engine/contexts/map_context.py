@@ -1,6 +1,7 @@
 from engine.contexts.context import Context
 from engine.utils.location_tree import LocationTree
 from typing import Callable
+from engine.utils.choice_handler import ChoiceHandler
 
 
 class MapContext(Context):
@@ -38,9 +39,9 @@ class MapContext(Context):
             else f'Regions in {context_data["map_domain_name"]}'
         self.known_locations = known_locations
 
-    def _generate_choice_handling(self) -> dict[str, Callable[[Context, Context], bool]]:
+    def _generate_choice_handling(self) -> ChoiceHandler:
         context_data = self.get_context_data()
-        choice_handlers = {}
+        choice_handler = ChoiceHandler(reserved_choices=[('b', 'Back')])
 
         def helper_local_travel(i: int) -> Callable[[Context, Context], bool]:
             new_global_location = context_data['map_contained_locations'][i]['global_location']
@@ -53,17 +54,23 @@ class MapContext(Context):
 
         if context_data['map_level'] in ('local', 'regional'):
             for choice_number in context_data['map_contained_locations']:
-                choice_handlers[str(choice_number)] = helper_local_travel(choice_number)
+                choice_handler.add_choice(executor=helper_local_travel(choice_number),
+                                          display_text=context_data['map_contained_locations'][choice_number]['display_name'])
             if context_data['map_level'] == 'local':
                 region: str = context_data['map_region']
-                choice_handlers['r'] = self.create_nested_map_handler(location=region)
-            choice_handlers['w'] = self.create_nested_map_handler(location='world')
+                choice_handler.add_choice(executor=self.create_nested_map_handler(location=region),
+                                          display_text='Region map',
+                                          choice_letter='r')
+            choice_handler.add_choice(executor=self.create_nested_map_handler(location='world'),
+                                      display_text='World map',
+                                      choice_letter='w')
         else:
             for choice_number in context_data['map_contained_locations']:
                 region: str = context_data['map_contained_locations'][choice_number]['global_location']
-                choice_handlers[str(choice_number)] = self.create_nested_map_handler(location=region)
+                choice_handler.add_choice(executor=self.create_nested_map_handler(location=region),
+                                          display_text=context_data['map_contained_locations'][choice_number]['display_name'])
 
-        return choice_handlers
+        return choice_handler
 
     def create_map_context_data(self, location: str) -> dict:
         map_context_data = {'player_global_location': self.get_context_data()['player_global_location'],
@@ -100,12 +107,3 @@ class MapContext(Context):
 
         return nested_map_handler
 
-    def print_choices(self) -> None:
-        context_data = self.get_context_data()
-        travel_location_keys = sorted(list(context_data['map_contained_locations'].keys()))
-        for choice in travel_location_keys:
-            print(f"{choice}: {context_data['map_contained_locations'][choice]['display_name']}")
-        if context_data['map_level'] == 'local':
-            print("r: Region map")
-        print("w: World map")
-        print("b: Back")
