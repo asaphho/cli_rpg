@@ -7,7 +7,7 @@ class ChoiceHandler:
     """
     def __init__(self, reserved_choices: list[tuple[str, str]] = None):
         self._choices: dict[str, tuple[str, Callable]] = {}
-        self._choice_numbers: list[int] = []
+        self._max_choice_number: int = 0
         self._choice_letters: list[str] = [tup[0].lower().strip() for tup in reserved_choices] \
             if reserved_choices else []
         self._display_texts: list[str] = [tup[1].strip() for tup in reserved_choices] if reserved_choices else []
@@ -37,8 +37,25 @@ class ChoiceHandler:
             self._display_texts.append(display_text.strip())
             self._choices[choice_letter.lower().strip()] = (display_text.strip(), executor)
         else:
-            assigned_integer = max(self._choice_numbers) + 1 if len(self._choice_numbers) > 0 else 1
-            self._choice_numbers.append(assigned_integer)
+            assigned_integer = self._max_choice_number + 1
+            self._max_choice_number = assigned_integer
             self._display_texts.append(display_text.strip())
             self._choices[str(assigned_integer)] = (display_text.strip(), executor)
 
+    def get_executor(self, choice: str) -> Callable:
+        if choice not in self._choices:
+            raise ValueError('Executor does not exist. If it is a reserved choice, this object does not handle it.')
+        return self._choices[choice][1]
+
+    def print_choices(self) -> None:
+        numbered_choices: list[int] = list(range(1, self._max_choice_number + 1))
+        for n in numbered_choices:
+            display: str = self._choices[str(n)][0]
+            print(f'{n}. {display}')
+        non_reserved_letters: list[str] = [letter for letter in self._choice_letters if letter not in
+                                           self.reserved_choices.keys()]
+        for letter in non_reserved_letters:
+            display: str = self._choices[letter][0]
+            print(f'{letter}. {display}')
+        for reserved in self.reserved_choices:
+            print(f'{reserved}. {self.reserved_choices[reserved]}')
