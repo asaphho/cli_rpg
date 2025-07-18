@@ -19,7 +19,6 @@ class GameContext(Context):
         self.entry_text_overrides = entry_text_overrides
         self.default_choice_handler_generator = default_choice_handler_generator
         self.choice_handler_overrides = choice_handler_overrides
-        self.choices: dict[str, str]
 
     def print_entry_text(self) -> None:
         game_state = self.context_data
