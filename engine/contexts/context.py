@@ -1,4 +1,3 @@
-from typing import Callable
 from engine.utils.choice_handler import ChoiceHandler
 
 
