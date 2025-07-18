@@ -1,4 +1,5 @@
 from typing import Callable
+from engine.utils.choice_handler import ChoiceHandler
 
 
 class Context:
@@ -29,26 +30,26 @@ class Context:
     def print_entry_text(self) -> None:
         print(self.entry_text)
 
-    def _generate_choice_handling(self) -> dict[str, Callable]:
+    def _generate_choice_handling(self) -> ChoiceHandler:
         """
-        Should be overridden in all subclasses of Context. This should produce a dictionary whose keys are the
-        choices that are accepted. The corresponding values are functions that take in the current context instance and
-        the parent context instance, do whatever is supposed to be done by that choice, and then return True if that
-        choice is meant to break the context's loop and exit, False otherwise.
+        Should be overridden in all subclasses of Context. This should produce a ChoiceHandler object, which maps the choices
+        to functions that take in the current context instance and the parent context instance, do whatever is supposed
+        to be done by that choice, and then return True if that choice is meant to break the context's loop and exit,
+        False otherwise.
         :return: bool - True if it exits the context, False if it does not.
         """
-        return {}
+        return ChoiceHandler()
 
-    def _handle_choice(self, choice: str, choice_handler: dict[str, Callable]) -> bool:
-        func = choice_handler[choice]
+    def _handle_choice(self, choice: str, choice_handler: ChoiceHandler) -> bool:
+        func = choice_handler.get_executor(choice)
         return func(self, self._parent_context)
 
-    def print_choices(self) -> None:
+    def print_choices(self, choice_handler: ChoiceHandler) -> None:
         """
-        Should be overridden in all subclasses of Context
+        Prints the choices
         :return:
         """
-        return
+        choice_handler.print_choices()
 
     def enter(self, exit_choice: str = 'b') -> bool:
         """
@@ -63,7 +64,7 @@ class Context:
                 choice_handler = self._generate_choice_handling()
                 self.print_entry_text()
                 print('\n')
-                self.print_choices()
+                self.print_choices(choice_handler)
             choice_input = input().lower().strip()
             if choice_input == exit_choice:
                 return False
