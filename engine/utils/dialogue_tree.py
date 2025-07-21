@@ -8,10 +8,11 @@ class DialogueTree:
     def get_current_node(self) -> str:
         return self.curr_node
 
-    def get_current_text(self) -> str:
-        if self.get_current_node() == '':
-            return self.entry_text
-        return self.dialogue_paths[self.get_current_node()][1]
+    def get_current_text(self, player_name: str = 'bob', npc_name: str = 'npc_man') -> str:
+        curr_node = self.get_current_node()
+        if curr_node == '':
+            return f'{npc_name}: {self.entry_text}'
+        return f'{player_name}: {self.get_player_line(curr_node)}\n\n{npc_name}: {self.get_response(curr_node)}'
 
     def add_node(self, node_name: str, player_line: str, response: str,
                  from_node: str = None) -> None:
