@@ -1,9 +1,13 @@
+from typing import Callable
+
+
 class DialogueTree:
 
     def __init__(self, entry_text: str):
         self.entry_text: str = entry_text
         self.dialogue_paths: dict[str, tuple[str, str]] = {}
         self.curr_node: str = ''
+        self.dialogue_action_triggers: dict[str, Callable] = {}
 
     def get_current_node(self) -> str:
         return self.curr_node
@@ -60,9 +64,27 @@ class DialogueTree:
         nodes_to_remove = list(filter(lambda x: x.startswith(head_full_name.strip()), all_nodes))
         for node in nodes_to_remove:
             self.dialogue_paths.pop(node)
+            if node in self.dialogue_action_triggers:
+                self.dialogue_action_triggers.pop(node)
 
     def is_at_terminal_node(self) -> bool:
         return len(self.get_available_nodes()) == 0
 
-    def export(self) -> dict[str, tuple[str, str]]:
+    def export_dialogue(self) -> dict[str, tuple[str, str]]:
         return self.dialogue_paths
+
+    def add_or_replace_trigger(self, node_full_name: str, action: Callable) -> None:
+        if node_full_name.strip() not in self.dialogue_paths.keys():
+            raise ValueError(f'Dialogue {node_full_name.strip()} path not found')
+        self.dialogue_action_triggers[node_full_name.strip()] = action
+
+    def get_action(self, node) -> Callable:
+        def null_function(arg):
+            return
+
+        return self.dialogue_action_triggers.get(node, null_function)
+
+    def remove_trigger(self, node: str) -> None:
+        if node.strip() not in self.dialogue_action_triggers.keys():
+            raise ValueError(f'Node {node.strip()} does not exist or does not have triggered action.')
+        self.dialogue_action_triggers.pop(node.strip())
