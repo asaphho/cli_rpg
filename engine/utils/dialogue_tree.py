@@ -8,6 +8,11 @@ class DialogueTree:
     def get_current_node(self) -> str:
         return self.curr_node
 
+    def get_current_text(self) -> str:
+        if self.get_current_node() == '':
+            return self.entry_text
+        return self.dialogue_paths[self.get_current_node()][1]
+
     def add_node(self, node_name: str, player_line: str, response: str,
                  from_node: str = None) -> None:
         if '_' in node_name:
