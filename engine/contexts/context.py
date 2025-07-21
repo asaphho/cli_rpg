@@ -53,7 +53,7 @@ class Context:
     def enter(self, exit_choice: str = 'b') -> bool:
         """
         Main loop of the context. Always called when a context is entered.
-        :return: True
+        :return: True unless exit_choice is chosen
         """
         exit_loop = False
         choice_handler = self._generate_choice_handling()
