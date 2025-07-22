@@ -22,7 +22,7 @@ class Item:
         self.quest_item = quest_item
         self.base_worth = base_worth
         self.classification = item_classification
-        self.stack_size = stack_size
+        self.stack_size = min(stack_size, max_stack_size)
         self.max_stack_size = max_stack_size
 
     def get_id(self) -> str:
@@ -62,7 +62,9 @@ class Item:
         self.stack_size = min(original_stack_size + incoming_stack_size, self.get_max_stack_size())
         return max(0, original_stack_size + incoming_stack_size - self.get_max_stack_size())
 
-    def remove_from_stack(self, count: int, ignore_insufficient: bool = False) -> None:
+    def remove_from_stack_return_all_gone(self, count: int, ignore_insufficient: bool = False) -> bool:
         if (count > self.get_stack_size()) and (ignore_insufficient is False):
             raise ValueError('Insufficient amount in stack.')
         self.stack_size = max(0, self.get_stack_size() - count)
+        return self.get_stack_size() == 0
+
