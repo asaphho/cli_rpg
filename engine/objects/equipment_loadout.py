@@ -36,7 +36,8 @@ class EquipmentLoadout:
 		else:
 			raise ValueError(f'Slot \'{slot.lower().strip()}\' does not exist')
 
+	def get_item(self, slot: str) -> Union[Equipment, None]:
+		return self.currently_equipped.get(slot.lower().strip(), None)
 
-
-		
-		
+	def slot_empty(self, slot: str) -> bool:
+		return self.get_item(slot) is None

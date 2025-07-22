@@ -21,7 +21,7 @@ class Item:
         self.weight = weight
         self.quest_item = quest_item
         self.base_worth = base_worth
-        self.classification = item_classification
+        self.classification = item_classification.lower().strip()
         self.stack_size = min(stack_size, max_stack_size)
         self.max_stack_size = max_stack_size
 
