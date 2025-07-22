@@ -9,7 +9,7 @@ class Equipment(Item):
 						 quest_item=quest_item, item_classification=classification, stack_size=stack_size,
 						 max_stack_size=max_stack_size)
 		self.slot = slot_name.lower().strip()
-		self.equipment_classification = equipment_classification
+		self.equipment_classification = equipment_classification.lower().strip()
 
 	def get_slot(self) -> str:
 		return self.slot
