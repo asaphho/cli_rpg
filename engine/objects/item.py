@@ -11,8 +11,9 @@ class Item:
     :param item_classification (str): A flag to be used in any way you want
     """
 
-    def __init__(self, item_id: str, display_name: str, equippable: bool = False, stackable: bool = False,
-                 weight: float = 0, quest_item: bool = False, base_worth: int = 0, item_classification: str = 'general'):
+    def __init__(self, item_id: str, display_name: str, equippable: bool = False, stackable: bool = False, stack_size: int = 1,
+                 max_stack_size: int = 1, weight: float = 0, quest_item: bool = False, base_worth: int = 0,
+                 item_classification: str = 'general'):
         self.item_id = item_id
         self.display_name = display_name
         self.equippable = equippable
@@ -21,6 +22,8 @@ class Item:
         self.quest_item = quest_item
         self.base_worth = base_worth
         self.classification = item_classification
+        self.stack_size = stack_size
+        self.max_stack_size = max_stack_size
 
     def get_id(self) -> str:
         return self.item_id
@@ -45,3 +48,21 @@ class Item:
 
     def get_item_classification(self) -> str:
         return self.classification
+
+    def get_stack_size(self) -> int:
+        return self.stack_size
+
+    def get_max_stack_size(self) -> int:
+        return self.max_stack_size
+
+    def add_to_stack_return_leftover(self, incoming_stack_size: int) -> int:
+        if not self.is_stackable():
+            raise ValueError('Cannot be stacked')
+        original_stack_size = self.get_stack_size()
+        self.stack_size = min(original_stack_size + incoming_stack_size, self.get_max_stack_size())
+        return max(0, original_stack_size + incoming_stack_size - self.get_max_stack_size())
+
+    def remove_from_stack(self, count: int, ignore_insufficient: bool = False) -> None:
+        if (count > self.get_stack_size()) and (ignore_insufficient is False):
+            raise ValueError('Insufficient amount in stack.')
+        self.stack_size = max(0, self.get_stack_size() - count)
