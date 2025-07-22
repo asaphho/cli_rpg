@@ -1,7 +1,18 @@
 class Item:
+    """
+    Object for general item.
+    :param item_id (str): This id is used internally.
+    :param display_name (str): The name to be displayed in-game
+    :param equippable (bool): Whether this item can be equipped in an EquipmentLoadout
+    :param stackable (bool): Whether this item can be in a stack
+    :param weight (float): A number can be assigned to give the item weight
+    :param quest_item (bool): Setting this to true prevents this item from being removed from inventory by normal means
+    :param base_worth (int): A number can be assigned to give the item a gold value
+    :param item_classification (str): A flag to be used in any way you want
+    """
 
     def __init__(self, item_id: str, display_name: str, equippable: bool = False, stackable: bool = False,
-                 weight: float = 0, quest_item: bool = False, base_worth: int = 0):
+                 weight: float = 0, quest_item: bool = False, base_worth: int = 0, item_classification: str = 'general'):
         self.item_id = item_id
         self.display_name = display_name
         self.equippable = equippable
@@ -9,6 +20,7 @@ class Item:
         self.weight = weight
         self.quest_item = quest_item
         self.base_worth = base_worth
+        self.classification = item_classification
 
     def get_id(self) -> str:
         return self.item_id
@@ -30,3 +42,6 @@ class Item:
 
     def get_base_worth(self) -> int:
         return self.base_worth
+
+    def get_item_classification(self) -> str:
+        return self.classification
