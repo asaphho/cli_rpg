@@ -4,11 +4,14 @@ class Item:
     :param item_id (str): This id is used internally.
     :param display_name (str): The name to be displayed in-game
     :param equippable (bool): Whether this item can be equipped in an EquipmentLoadout
-    :param stackable (bool): Whether this item can be in a stack
+    :param stackable (bool): Whether this item can be in a stack.
+    :param stack_size (int): Stack size to initiate with
+    :param max_stack_size (int): Maximum stack size.
     :param weight (float): A number can be assigned to give the item weight
     :param quest_item (bool): Setting this to true prevents this item from being removed from inventory by normal means
     :param base_worth (int): A number can be assigned to give the item a gold value
     :param item_classification (str): A flag to be used in any way you want
+    :param description (str): For displaying the item description
     """
 
     def __init__(self, item_id: str, display_name: str, equippable: bool = False, stackable: bool = False, stack_size: int = 1,
@@ -39,6 +42,9 @@ class Item:
         return self.stackable
 
     def get_weight(self) -> float:
+        return self.weight * self.stack_size if self.is_stackable() else self.weight
+
+    def get_unit_weight(self) -> float:
         return self.weight
 
     def is_quest_item(self) -> bool:
@@ -71,3 +77,16 @@ class Item:
 
     def get_description_for_display(self) -> str:
         return f'{self.get_display_name()}\n\n{self.description}'
+
+    def copy_stackable(self, stack_size: int):
+        return Item(item_id=self.get_id(),
+                    display_name=self.get_display_name(),
+                    equippable=self.is_equippable(),
+                    stackable=True,
+                    stack_size=stack_size,
+                    max_stack_size=self.get_stack_size(),
+                    weight=self.get_unit_weight(),
+                    quest_item=self.is_quest_item(),
+                    base_worth=self.get_base_worth(),
+                    item_classification=self.get_item_classification(),
+                    description=self.description)
