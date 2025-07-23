@@ -60,5 +60,57 @@ class Inventory:
             else:
                 return len(matching_items)
 
+    def get_all_of_classification(self, classification: str) -> list[Item]:
+        return [item for item in self.items_in_storage if item.get_item_classification() == classification]
 
+    def get_all_classifications(self) -> list[str]:
+        return list(set([item.get_item_classification() for item in self.items_in_storage]))
 
+    def get_all_equipment(self) -> list[Equipment]:
+        return [item for item in self.items_in_storage if isinstance(item, Equipment)]
+
+    def get_all_equipment_classification(self) -> list[str]:
+        return list(set([eqp.get_equipment_classification() for eqp in self.get_all_equipment()]))
+
+    def equip_from_storage(self, equipment: Equipment) -> None:
+        # TODO: Handle 2-Handed weapons
+        loadout = self.equipment_loadout
+        curr_equipped = loadout.get_item(equipment.get_slot())
+        if curr_equipped is not None:
+            if (not equipment.is_stackable()) or (curr_equipped.get_id() != equipment.get_id()):
+                self.add_to_storage(curr_equipped)
+                loadout.equip(equipment)
+                self.remove_from_storage(equipment.get_id(), equipment.get_stack_size())
+            else:
+                curr_equipped_stack = curr_equipped.get_stack_size()
+                max_stack_size = curr_equipped.get_max_stack_size()
+                capacity = max_stack_size - curr_equipped_stack
+                if capacity == 0:
+                    self.add_to_storage(curr_equipped)
+                    loadout.equip(equipment)
+                    self.remove_from_storage(equipment.get_id(), equipment.get_stack_size())
+                elif capacity > 0:
+                    equipping_stack_size = equipment.get_stack_size()
+                    remaining = loadout.get_item(equipment.get_slot()).add_to_stack_return_leftover(equipping_stack_size)
+                    to_remove = equipping_stack_size - remaining
+                    self.remove_from_storage(equipment.get_id(), to_remove)
+        else:
+            loadout.equip(equipment)
+            self.remove_from_storage(equipment.get_id(), equipment.get_stack_size())
+
+    def unequip_into_storage(self, equipment: Equipment) -> None:
+        self.equipment_loadout.unequip(equipment.get_slot())
+        self.add_to_storage(equipment)
+
+    def get_total_storage_weight(self) -> float:
+        return sum([item.get_weight() for item in self.items_in_storage])
+
+    def get_total_equipped_weight(self) -> float:
+        equipped_weight = 0
+        for slot in self.equipment_loadout.currently_equipped:
+            if (item := self.equipment_loadout.get_item(slot)) is not None:
+                equipped_weight += item.get_weight()
+        return equipped_weight
+
+    def get_total_carried_weight(self) -> float:
+        return self.get_total_storage_weight() + self.get_total_equipped_weight()
