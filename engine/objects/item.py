@@ -9,13 +9,13 @@ class Item:
     :param max_stack_size (int): Maximum stack size.
     :param weight (float): A number can be assigned to give the item weight
     :param quest_item (bool): Setting this to true prevents this item from being removed from inventory by normal means
-    :param base_worth (int): A number can be assigned to give the item a gold value
+    :param base_value (int): A number can be assigned to give the item a gold value
     :param item_classification (str): A flag to be used in any way you want
     :param description (str): For displaying the item description
     """
 
     def __init__(self, item_id: str, display_name: str, equippable: bool = False, stackable: bool = False, stack_size: int = 1,
-                 max_stack_size: int = 1, weight: float = 0, quest_item: bool = False, base_worth: int = 0,
+                 max_stack_size: int = 1, weight: float = 0, quest_item: bool = False, base_value: int = 0,
                  item_classification: str = 'general', description: str = ''):
         self.item_id = item_id
         self.display_name = display_name
@@ -23,7 +23,7 @@ class Item:
         self.stackable = stackable
         self.weight = weight
         self.quest_item = quest_item
-        self.base_worth = base_worth
+        self.base_value = base_value
         self.classification = item_classification.lower().strip()
         self.stack_size = min(stack_size, max_stack_size)
         self.max_stack_size = max_stack_size
@@ -50,8 +50,8 @@ class Item:
     def is_quest_item(self) -> bool:
         return self.quest_item
 
-    def get_base_worth(self) -> int:
-        return self.base_worth
+    def get_base_value(self) -> int:
+        return self.base_value
 
     def get_item_classification(self) -> str:
         return self.classification
@@ -76,7 +76,7 @@ class Item:
         return self.get_stack_size() == 0
 
     def get_description_for_display(self) -> str:
-        return f'{self.get_display_name()}\n\n{self.description}\n\nWeight: {self.get_unit_weight()}\nBase value: {self.get_base_worth()}'
+        return f'{self.get_display_name()}\n\n{self.description}\n\nWeight: {self.get_unit_weight()}\nBase value: {self.get_base_value()}'
 
     def copy_stackable(self, stack_size: int):
         return Item(item_id=self.get_id(),
@@ -87,6 +87,6 @@ class Item:
                     max_stack_size=self.get_stack_size(),
                     weight=self.get_unit_weight(),
                     quest_item=self.is_quest_item(),
-                    base_worth=self.get_base_worth(),
+                    base_value=self.get_base_value(),
                     item_classification=self.get_item_classification(),
                     description=self.description)
