@@ -29,4 +29,36 @@ class Inventory:
             if outstanding > 0:
                 self.items_in_storage.append(item.copy_stackable(outstanding))
 
+    def remove_from_storage(self, item_id: str, quantity: int = 1) -> None:
+        matching_items: list[Item] = [item for item in self.items_in_storage if item.get_id() == item_id]
+        if len(matching_items) == 0:
+            raise ValueError(f'Item not found.')
+        item_to_remove = matching_items[0]
+        if not item_to_remove.is_stackable():
+            for i in range(len(self.items_in_storage)):
+                if self.items_in_storage[i].get_id() == item_id:
+                    self.items_in_storage.pop(i)
+                    return
+        else:
+            total_stored_amount = sum([item.get_stack_size() for item in matching_items])
+            if quantity > total_stored_amount:
+                raise ValueError('Insufficient quantity in storage.')
+            leftover = total_stored_amount - quantity
+            self.items_in_storage = list(filter(lambda x: x.get_id() != item_id, self.items_in_storage))
+            if leftover > 0:
+                stack_to_add = item_to_remove.copy_stackable(leftover)
+                self.add_to_storage(stack_to_add)
+
+    def count_item_of_id(self, item_id: str) -> int:
+        matching_items = [item for item in self.items_in_storage if item.get_id() == item_id]
+        if len(matching_items) == 0:
+            return 0
+        else:
+            stackable = matching_items[0].is_stackable()
+            if stackable:
+                return sum([item.get_stack_size() for item in matching_items])
+            else:
+                return len(matching_items)
+
+
 
