@@ -49,5 +49,6 @@ class EquipmentLoadout:
 	def get_loadout_display(self) -> str:
 		display_text = ''
 		for slot in self.slots:
-			display_text += f'{slot}: {self.get_item(slot).get_display_name()}\n'
+			name_to_display = self.get_item(slot).get_display_name() if not self.slot_empty(slot) else 'Empty'
+			display_text += f'{slot}: {name_to_display}\n'
 		return display_text
