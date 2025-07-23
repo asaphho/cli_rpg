@@ -8,7 +8,7 @@ class Equipment(Item):
 		super().__init__(item_id=item_id, display_name=display_name, equippable=True, stackable=stackable, weight=weight,
 						 quest_item=quest_item, item_classification=classification, stack_size=stack_size,
 						 max_stack_size=max_stack_size, description=description)
-		self.slot = slot_name.lower().strip()
+		self.slot = slot_name.strip()
 		self.equipment_classification = equipment_classification.lower().strip()
 
 	def get_slot(self) -> str:
