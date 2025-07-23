@@ -29,8 +29,8 @@ class Item:
     def get_id(self) -> str:
         return self.item_id
 
-    def get_display_name(self) -> str:
-        return self.display_name
+    def get_display_name(self, include_stack_size: bool = False) -> str:
+        return self.display_name + f' ({self.get_stack_size()})' if self.is_stackable() and include_stack_size else ''
 
     def is_equippable(self) -> bool:
         return self.equippable
