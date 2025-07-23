@@ -13,7 +13,7 @@ class Item:
 
     def __init__(self, item_id: str, display_name: str, equippable: bool = False, stackable: bool = False, stack_size: int = 1,
                  max_stack_size: int = 1, weight: float = 0, quest_item: bool = False, base_worth: int = 0,
-                 item_classification: str = 'general'):
+                 item_classification: str = 'general', description: str = ''):
         self.item_id = item_id
         self.display_name = display_name
         self.equippable = equippable
@@ -24,6 +24,7 @@ class Item:
         self.classification = item_classification.lower().strip()
         self.stack_size = min(stack_size, max_stack_size)
         self.max_stack_size = max_stack_size
+        self.description = description
 
     def get_id(self) -> str:
         return self.item_id
@@ -68,3 +69,5 @@ class Item:
         self.stack_size = max(0, self.get_stack_size() - count)
         return self.get_stack_size() == 0
 
+    def get_description_for_display(self) -> str:
+        return f'{self.get_display_name()}\n\n{self.description}'
