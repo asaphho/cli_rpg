@@ -76,7 +76,7 @@ class Item:
         return self.get_stack_size() == 0
 
     def get_description_for_display(self) -> str:
-        return f'{self.get_display_name()}\n\n{self.description}'
+        return f'{self.get_display_name()}\n\n{self.description}\n\nWeight: {self.get_unit_weight()}\nBase value: {self.get_base_worth()}'
 
     def copy_stackable(self, stack_size: int):
         return Item(item_id=self.get_id(),
