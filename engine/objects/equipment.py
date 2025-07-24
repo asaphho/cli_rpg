@@ -1,13 +1,17 @@
 from engine.objects.item import Item
+from engine.utils.roll import Roll
+from typing import Union
 
 
 class Equipment(Item):
 	def __init__(self, item_id: str, display_name: str, slot_name: str, stackable: bool = False, weight: float = 0,
-				 stack_size: int = 1, max_stack_size: int = 1, quest_item: bool = False, classification: str = 'equipment',
-				 equipment_classification: str = 'general_equipment', description: str = ''):
-		super().__init__(item_id=item_id, display_name=display_name, equippable=True, stackable=stackable, weight=weight,
-						 quest_item=quest_item, item_classification=classification, stack_size=stack_size,
-						 max_stack_size=max_stack_size, description=description)
+                 stack_size: int = 1, max_stack_size: int = 1, quest_item: bool = False,
+                 classification: str = 'Equipment',
+                 equipment_classification: str = 'Apparel', description: str = '', base_value: int = 0):
+		super().__init__(item_id=item_id, display_name=display_name, equippable=True, stackable=stackable,
+                         weight=weight,
+                         quest_item=quest_item, item_classification=classification, stack_size=stack_size,
+                         base_value=base_value, max_stack_size=max_stack_size, description=description)
 		self.slot = slot_name.strip()
 		self.equipment_classification = equipment_classification.lower().strip()
 
@@ -17,3 +21,27 @@ class Equipment(Item):
 	def get_equipment_classification(self) -> str:
 		return self.equipment_classification
 
+
+class Weapon(Equipment):
+
+	def __init__(self, item_id: str, display_name: str, damage_roll: Roll, damage_type: str, ranged: bool,
+                two_handed: bool = False, required_ammo_type: str = None, self_ammo: bool = False,
+                stackable: bool = False, stack_size: int = 1, max_stack_size: int = 1, weight: float = 0,
+                base_value: int = 0, quest_item: bool = False, classification: str = 'Equipment',
+                equipment_classification: str = 'Weapons', description: str = ''):
+		super().__init__(item_id=item_id, display_name=display_name, slot_name='Main hand', stackable=stackable,
+                         stack_size=stack_size, max_stack_size=max_stack_size, weight=weight, base_value=base_value,
+                         quest_item=quest_item, classification=classification,
+                         equipment_classification=equipment_classification, description=description)
+		self.damage_roll: Roll = damage_roll
+		self.damage_type: str = damage_type
+		self.ranged: bool = ranged
+		self.two_handed: bool = two_handed
+		self.needs_ammo: bool = required_ammo_type is not None
+		self.required_ammo_type: Union[str, None] = required_ammo_type
+		self.self_ammo: bool = self_ammo
+
+	def get_damage_roll(self) -> Roll:
+		return self.damage_roll.copy()
+
+	# TODO: Finish this
