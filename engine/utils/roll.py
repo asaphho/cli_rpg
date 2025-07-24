@@ -14,7 +14,14 @@ class Roll:
             self.adv = 0
         self.min = int(minimum)
 
+    def minimum_forces_constant(self) -> bool:
+        if self.bonus >= 0:
+            return False
+        return self.n * self.d + self.bonus <= self.min
+
     def get_display_text(self) -> str:
+        if self.minimum_forces_constant():
+            return str(self.min)
         text = f'{self.n}d{self.d}'
         if self.bonus > 0:
             text += f'+{self.bonus}'
@@ -24,14 +31,14 @@ class Roll:
             text += ' with advantage'
         elif self.adv == -1:
             text += ' with disadvantage'
-        if self.bonus < 0:
+        if (self.bonus < 0) and (self.n + self.bonus < self.min):
             text += f' (min. {self.min})'
         return text
 
     def add_bonus(self, amt: int) -> None:
         self.bonus += int(amt)
 
-    def add_die(self, n: int) -> None:
+    def add_dice(self, n: int) -> None:
         self.n = max(self.n + int(n), 1)
 
     def grant_advantage(self) -> None:
@@ -44,6 +51,9 @@ class Roll:
         return sum([randint(1, self.d) for _ in range(self.n)])
 
     def roll(self) -> int:
+        if self.minimum_forces_constant():
+            return self.min
+
         raw_rolls = [self.raw_roll_once() for _ in range(abs(self.adv) + 1)]
 
         def take_first(x):
