@@ -84,3 +84,7 @@ class Roll:
             self.adv = int(adv//abs(adv))
         else:
             self.adv = 0
+
+    def copy(self):
+        return Roll(n=self.n, d=self.d, adv=self.adv, bonus=self.bonus, minimum=self.min)
+
