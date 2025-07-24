@@ -44,4 +44,15 @@ class Weapon(Equipment):
 	def get_damage_roll(self) -> Roll:
 		return self.damage_roll.copy()
 
+	def get_description_for_display(self) -> str:
+		text = f'{self.get_display_name()}\n\n{self.description}\n\n'
+		text += f'Damage: {self.damage_roll.get_display_text()}\n'
+		text += f'Damage type: {self.damage_type}\n'
+		text += 'Two-handed, ' if self.two_handed else 'One-handed, '
+		text += 'ranged\n' if self.ranged else 'melee\n'
+		if (self.required_ammo_type is not None) and (self.self_ammo is False):
+			text += f'Required ammo type: {self.required_ammo_type}\n'
+		text += f'Weight: {self.get_unit_weight()}\nBase value: {self.get_base_value()}'
+		return text
+
 	# TODO: Finish this
