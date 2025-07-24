@@ -1,5 +1,5 @@
 from engine.objects.item import Item
-from engine.objects.equipment import Equipment
+from engine.objects.equipment import Equipment, Weapon
 from engine.objects.equipment_loadout import EquipmentLoadout
 
 
@@ -73,7 +73,6 @@ class Inventory:
         return list(set([eqp.get_equipment_classification() for eqp in self.get_all_equipment()]))
 
     def equip_from_storage(self, equipment: Equipment) -> None:
-        # TODO: Handle 2-Handed weapons
         loadout = self.equipment_loadout
         curr_equipped = loadout.get_item(equipment.get_slot())
         if curr_equipped is not None:
@@ -97,6 +96,12 @@ class Inventory:
         else:
             loadout.equip(equipment)
             self.remove_from_storage(equipment.get_id(), equipment.get_stack_size())
+        if isinstance(equipment, Weapon):
+            if equipment.two_handed:
+                in_off_hand = loadout.get_item('Off-hand')
+                if in_off_hand is not None:
+                    loadout.unequip('Off-hand')
+                    self.add_to_storage(in_off_hand)
 
     def unequip_into_storage(self, equipment: Equipment) -> None:
         self.equipment_loadout.unequip(equipment.get_slot())
