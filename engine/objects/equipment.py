@@ -58,6 +58,8 @@ class Weapon(Equipment):
 		if (self.required_ammo_type is not None) and (self.self_ammo is False):
 			text += f'Required ammo type: {self.required_ammo_type}\n'
 		text += f'Weight: {self.get_unit_weight()}\nBase value: {self.get_base_value()}'
+		if len(self.tags) > 0:
+			text += f"\nTags: {', '.join(self.tags)}"
 		return text
 
 	# TODO: Finish this
