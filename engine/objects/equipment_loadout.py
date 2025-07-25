@@ -61,3 +61,5 @@ class EquipmentLoadout:
 		assert isinstance(weapon, Weapon)
 		return weapon.two_handed
 
+	def get_slot_names(self) -> list[str]:
+		return list(self.currently_equipped.keys())
