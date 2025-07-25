@@ -59,3 +59,6 @@ class ChoiceHandler:
             print(f'{letter}: {display}')
         for reserved in self.reserved_choices:
             print(f'{reserved}: {self.reserved_choices[reserved]}')
+
+    def get_choice_characters(self) -> list[str]:
+        return list(self._choices.keys())
