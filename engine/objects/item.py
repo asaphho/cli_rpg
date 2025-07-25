@@ -1,3 +1,6 @@
+from typing import Callable
+
+
 class Item:
     """
     Object for general item.
@@ -16,7 +19,8 @@ class Item:
 
     def __init__(self, item_id: str, display_name: str, equippable: bool = False, stackable: bool = False, stack_size: int = 1,
                  max_stack_size: int = 1, weight: float = 0, quest_item: bool = False, base_value: int = 0,
-                 item_classification: str = 'general', description: str = ''):
+                 item_classification: str = 'general', description: str = '', consumable: bool = False,
+                 consume_function: Callable = None):
         self.item_id = item_id
         self.display_name = display_name
         self.equippable = equippable
@@ -28,6 +32,8 @@ class Item:
         self.stack_size = min(stack_size, max_stack_size)
         self.max_stack_size = max_stack_size
         self.description = description
+        self.consumable = consumable
+        self.consume_function = consume_function
 
     def get_id(self) -> str:
         return self.item_id
@@ -41,11 +47,17 @@ class Item:
     def is_stackable(self) -> bool:
         return self.stackable
 
+    def is_consumable(self) -> bool:
+        return self.consumable
+
     def get_weight(self) -> float:
         return self.weight * self.stack_size if self.is_stackable() else self.weight
 
     def get_unit_weight(self) -> float:
         return self.weight
+
+    def get_consume_function(self) -> Callable:
+        return self.consume_function
 
     def is_quest_item(self) -> bool:
         return self.quest_item

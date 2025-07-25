@@ -1,16 +1,16 @@
 from engine.objects.item import Item
 from engine.utils.roll import Roll
-from typing import Union
+from typing import Union, Callable
 
 
 class Equipment(Item):
 	def __init__(self, item_id: str, display_name: str, slot_name: str, stackable: bool = False, weight: float = 0,
                  stack_size: int = 1, max_stack_size: int = 1, quest_item: bool = False,
-                 classification: str = 'Equipment',
+                 classification: str = 'Equipment', consumable: bool = False, consume_function: Callable = None,
                  equipment_classification: str = 'Apparel', description: str = '', base_value: int = 0,
 				 tags: list[str] = None):
 		super().__init__(item_id=item_id, display_name=display_name, equippable=True, stackable=stackable,
-                         weight=weight,
+                         weight=weight, consumable=consumable, consume_function=consume_function,
                          quest_item=quest_item, item_classification=classification, stack_size=stack_size,
                          base_value=base_value, max_stack_size=max_stack_size, description=description)
 		self.slot = slot_name.strip()
@@ -36,7 +36,7 @@ class Weapon(Equipment):
                 equipment_classification: str = 'Weapons', description: str = '', tags: list[str] = None):
 		super().__init__(item_id=item_id, display_name=display_name, slot_name='Main hand', stackable=stackable,
                          stack_size=stack_size, max_stack_size=max_stack_size, weight=weight, base_value=base_value,
-                         quest_item=quest_item, classification=classification,
+                         quest_item=quest_item, classification=classification, consumable=False,
                          equipment_classification=equipment_classification, description=description, tags=tags)
 		self.damage_roll: Roll = damage_roll
 		self.damage_type: str = damage_type
