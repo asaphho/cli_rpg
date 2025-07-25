@@ -15,6 +15,8 @@ class Item:
     :param base_value (int): A number can be assigned to give the item a gold value
     :param item_classification (str): A flag to be used in any way you want
     :param description (str): For displaying the item description
+    :param consumable (bool): if the item can be consumed
+    :param consume_function (Callable): What the item does if consumed
     """
 
     def __init__(self, item_id: str, display_name: str, equippable: bool = False, stackable: bool = False, stack_size: int = 1,
