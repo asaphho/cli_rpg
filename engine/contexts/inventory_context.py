@@ -35,7 +35,7 @@ class InventoryContext(Context):
         elif scope == 'storage-top':
             self.entry_text = 'These are your items in storage. Select a category.'
         elif scope.startswith('storage: '):
-            self.entry_text = ''
+            self.entry_text = scope.split(': ', maxsplit=1)[1]
 
         print(self.entry_text)
 
@@ -64,7 +64,6 @@ class InventoryContext(Context):
                                       display_text='Stored items',
                                       choice_letter='s')
         elif scope == 'equipment':
-            # TODO: Complete
 
             def empty_slot_executor(*args):
                 print('Slot is empty.')
@@ -91,7 +90,38 @@ class InventoryContext(Context):
                 else:
                     choice_handler.add_choice(executor=make_item_executor(item_at_slot),
                                               display_text=f'{slot_name}: {item_at_slot.get_display_name(include_stack_size=True)}')
+        elif scope == 'storage-top':
+            item_categories: list[str] = self.inventory.get_all_classifications()
 
+            def equipment_executor(curr_context: InventoryContext, parent_context: Context) -> bool:
+                new_context_data = deepcopy(curr_context.get_context_data())
+                new_context_data['scope'] = 'storage: Equipment'
+                new_context = InventoryContext(parent_context=parent_context,
+                                               context_data=new_context_data,
+                                               inventory=curr_context.inventory)
+                new_context.enter()
+                return False
+
+            def make_category_executor(classification: str) -> Callable[[InventoryContext, Context], bool]:
+                def other_category_executor(curr_context: InventoryContext, parent_context: Context) -> bool:
+                    new_context_data = deepcopy(curr_context.get_context_data())
+                    new_context_data['scope'] = f'storage: {classification}'
+                    new_context = InventoryContext(parent_context=parent_context,
+                                                   context_data=new_context_data,
+                                                   inventory=curr_context.inventory)
+                    new_context.enter()
+                    return False
+                return other_category_executor
+            if 'Equipment' in item_categories:
+                choice_handler.add_choice(executor=equipment_executor,
+                                          display_text='Equipment')
+                item_categories.remove('Equipment')
+            for category in item_categories:
+                choice_handler.add_choice(executor=make_category_executor(category),
+                                          display_text=category)
+        elif scope.startswith('storage: '):
+            # TODO: Write this
+            pass
         return choice_handler
 
 
