@@ -7,19 +7,24 @@ class Equipment(Item):
 	def __init__(self, item_id: str, display_name: str, slot_name: str, stackable: bool = False, weight: float = 0,
                  stack_size: int = 1, max_stack_size: int = 1, quest_item: bool = False,
                  classification: str = 'Equipment',
-                 equipment_classification: str = 'Apparel', description: str = '', base_value: int = 0):
+                 equipment_classification: str = 'Apparel', description: str = '', base_value: int = 0,
+				 tags: list[str] = None):
 		super().__init__(item_id=item_id, display_name=display_name, equippable=True, stackable=stackable,
                          weight=weight,
                          quest_item=quest_item, item_classification=classification, stack_size=stack_size,
                          base_value=base_value, max_stack_size=max_stack_size, description=description)
 		self.slot = slot_name.strip()
 		self.equipment_classification = equipment_classification.lower().strip()
+		self.tags: list[str] = [] if tags is None else tags
 
 	def get_slot(self) -> str:
 		return self.slot
 
 	def get_equipment_classification(self) -> str:
 		return self.equipment_classification
+
+	def has_tag(self, tag: str) -> bool:
+		return tag in self.tags
 
 
 class Weapon(Equipment):
@@ -28,11 +33,11 @@ class Weapon(Equipment):
                 two_handed: bool = False, required_ammo_type: str = None, self_ammo: bool = False,
                 stackable: bool = False, stack_size: int = 1, max_stack_size: int = 1, weight: float = 0,
                 base_value: int = 0, quest_item: bool = False, classification: str = 'Equipment',
-                equipment_classification: str = 'Weapons', description: str = ''):
+                equipment_classification: str = 'Weapons', description: str = '', tags: list[str] = None):
 		super().__init__(item_id=item_id, display_name=display_name, slot_name='Main hand', stackable=stackable,
                          stack_size=stack_size, max_stack_size=max_stack_size, weight=weight, base_value=base_value,
                          quest_item=quest_item, classification=classification,
-                         equipment_classification=equipment_classification, description=description)
+                         equipment_classification=equipment_classification, description=description, tags=tags)
 		self.damage_roll: Roll = damage_roll
 		self.damage_type: str = damage_type
 		self.ranged: bool = ranged
