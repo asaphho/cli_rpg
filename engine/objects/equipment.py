@@ -29,7 +29,7 @@ class Equipment(Item):
 
 class Weapon(Equipment):
 
-	def __init__(self, item_id: str, display_name: str, damage_roll: Roll, damage_type: str, ranged: bool,
+	def __init__(self, item_id: str, display_name: str, damage_roll: Roll, damage_type: str, ranged: bool = False,
                 two_handed: bool = False, required_ammo_type: str = None, self_ammo: bool = False,
                 stackable: bool = False, stack_size: int = 1, max_stack_size: int = 1, weight: float = 0,
                 base_value: int = 0, quest_item: bool = False, classification: str = 'Equipment',

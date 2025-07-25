@@ -1,5 +1,5 @@
 from typing import Union
-from engine.objects.equipment import Equipment
+from engine.objects.equipment import Equipment, Weapon
 
 
 class EquipmentLoadout:
@@ -53,3 +53,11 @@ class EquipmentLoadout:
 				else 'Empty'
 			display_text += f'{slot}: {name_to_display}\n'
 		return display_text
+
+	def two_handed_equipped(self) -> bool:
+		weapon = self.get_item('Main hand')
+		if self.get_item('Main hand') is None:
+			return False
+		assert isinstance(weapon, Weapon)
+		return weapon.two_handed
+
