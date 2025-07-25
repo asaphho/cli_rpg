@@ -67,7 +67,7 @@ class Context:
             choice_input = input().lower().strip()
             if choice_input == exit_choice:
                 return False
-            if choice_input in choice_handler.get_choice_characters():
+            if choice_input in choice_handler.get_choice_strings():
                 exit_loop = self._handle_choice(choice=choice_input, choice_handler=choice_handler)
                 rerun_entry = True
             else:
