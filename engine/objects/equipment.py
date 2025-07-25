@@ -32,12 +32,12 @@ class Weapon(Equipment):
     def __init__(self, item_id: str, display_name: str, damage_roll: Roll, damage_type: str, ranged: bool = False,
                  two_handed: bool = False, required_ammo_type: str = None, self_ammo: bool = False,
                  stackable: bool = False, stack_size: int = 1, max_stack_size: int = 1, weight: float = 0,
-                 base_value: int = 0, quest_item: bool = False, equipment_classification: str = 'Weapons',
+                 base_value: int = 0, quest_item: bool = False,
                  description: str = '', tags: list[str] = None):
         super().__init__(item_id=item_id, display_name=display_name, slot_name='Main hand', stackable=stackable,
                          stack_size=stack_size, max_stack_size=max_stack_size, weight=weight, base_value=base_value,
                          quest_item=quest_item, consumable=False,
-                         equipment_classification=equipment_classification, description=description, tags=tags)
+                         equipment_classification='Weapons', description=description, tags=tags)
         self.damage_roll: Roll = damage_roll
         self.damage_type: str = damage_type
         self.ranged: bool = ranged
