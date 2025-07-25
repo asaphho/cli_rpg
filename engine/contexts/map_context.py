@@ -41,7 +41,7 @@ class MapContext(Context):
 
     def _generate_choice_handling(self) -> ChoiceHandler:
         context_data = self.get_context_data()
-        choice_handler = ChoiceHandler(reserved_choices=[('b', 'Back')])
+        choice_handler = ChoiceHandler(reserved_choices=[('b', 'Back to game')])
 
         def helper_local_travel(i: int) -> Callable[[Context, Context], bool]:
             new_global_location = context_data['map_contained_locations'][i]['global_location']
