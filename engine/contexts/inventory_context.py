@@ -64,7 +64,33 @@ class InventoryContext(Context):
                                       choice_letter='s')
         elif scope == 'equipment':
             # TODO: Complete
-            pass
+
+            def empty_slot_executor(*args):
+                print('Slot is empty.')
+                return False
+
+            def make_item_executor(equipment: Equipment) -> Callable:
+                def item_executor(curr_context: InventoryContext, parent_context: Context) -> bool:
+                    item_description_context = ItemDescriptionPage(parent_context=parent_context,
+                                                                   context_data=curr_context.get_context_data(),
+                                                                   item=equipment,
+                                                                   currently_equipped=True,
+                                                                   inventory=curr_context.inventory)
+                    item_description_context.enter()
+                    return False
+                return item_executor
+
+            slot_names = self.inventory.equipment_loadout.get_slot_names()
+            for i in range(1, len(slot_names) + 1):
+                slot_name = slot_names[i - 1]
+                item_at_slot = self.inventory.equipment_loadout.get_item(slot_name)
+                if item_at_slot is None:
+                    choice_handler.add_choice(executor=empty_slot_executor,
+                                              display_text=f'{slot_name}: Empty')
+                else:
+                    choice_handler.add_choice(executor=make_item_executor(item_at_slot),
+                                              display_text=f'{slot_name}: {item_at_slot.get_display_name(include_stack_size=True)}')
+
         return choice_handler
 
 
