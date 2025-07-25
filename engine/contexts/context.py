@@ -62,7 +62,7 @@ class Context:
             if rerun_entry:
                 choice_handler = self._generate_choice_handling()
                 self.print_entry_text()
-                print('\n')
+                print('\n\n')
                 self.print_choices(choice_handler)
             choice_input = input().lower().strip()
             if choice_input == exit_choice:
