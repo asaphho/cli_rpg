@@ -3,6 +3,7 @@ from typing import Callable
 from engine.objects.item import Item
 from engine.objects.equipment import Equipment
 from engine.contexts.context import Context
+from engine.contexts.popup_context import PopupContext
 from engine.objects.inventory import Inventory
 from engine.utils.choice_handler import ChoiceHandler
 
@@ -175,6 +176,14 @@ class ItemDescriptionPage(Context):
             print(f'{curr_context.item.get_display_name()} consumed.')
             return True
 
+        def popup_executor(curr_context: ItemDescriptionPage,
+                           parent_context: Context) -> bool:
+            item_description = curr_context.item.get_description_for_display()
+            popup_context = PopupContext(parent_context=parent_context,
+                                         display_text=item_description)
+            popup_context.enter()
+            return False
+
         if self.item_currently_equipped:
             choice_handler.add_choice(executor=unequip_executor,
                                       display_text='Unequip item',
@@ -183,6 +192,10 @@ class ItemDescriptionPage(Context):
             choice_handler.add_choice(executor=equip_executor,
                                       display_text='Equip item',
                                       choice_letter='e')
+            if self.inventory.equipment_loadout.get_item(self.item.get_slot()) is not None:
+                choice_handler.add_choice(executor=popup_executor,
+                                          display_text=f'View currently equipped in {self.item.get_slot()}',
+                                          choice_letter='v')
         if self.item.consumable:
             choice_handler.add_choice(executor=consume_executor,
                                       display_text='Consume',
