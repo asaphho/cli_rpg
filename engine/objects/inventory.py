@@ -23,7 +23,7 @@ class Inventory:
             incoming_stack_size = item.get_stack_size()
             outstanding = incoming_stack_size
             for stack in stacks_with_capacity:
-                outstanding = stack.add_to_stack_return_leftover(outstanding)
+                outstanding = stack.add_to_stack_return_excess(outstanding)
                 if outstanding == 0:
                     break
             if outstanding > 0:
@@ -90,7 +90,7 @@ class Inventory:
                     self.remove_from_storage(equipment.get_id(), equipment.get_stack_size())
                 elif capacity > 0:
                     equipping_stack_size = equipment.get_stack_size()
-                    remaining = loadout.get_item(equipment.get_slot()).add_to_stack_return_leftover(equipping_stack_size)
+                    remaining = loadout.get_item(equipment.get_slot()).add_to_stack_return_excess(equipping_stack_size)
                     to_remove = equipping_stack_size - remaining
                     self.remove_from_storage(equipment.get_id(), to_remove)
         else:

@@ -76,7 +76,7 @@ class Item:
     def get_max_stack_size(self) -> int:
         return self.max_stack_size
 
-    def add_to_stack_return_leftover(self, incoming_stack_size: int) -> int:
+    def add_to_stack_return_excess(self, incoming_stack_size: int) -> int:
         if not self.is_stackable():
             raise ValueError('Cannot be stacked')
         original_stack_size = self.get_stack_size()
