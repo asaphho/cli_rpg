@@ -119,9 +119,30 @@ class InventoryContext(Context):
             for category in item_categories:
                 choice_handler.add_choice(executor=make_category_executor(category),
                                           display_text=category)
+            choice_handler.add_choice(executor=make_category_executor('All'),
+                                      display_text='All items in storage',
+                                      choice_letter='a')
         elif scope.startswith('storage: '):
             # TODO: Write this
-            pass
+            def make_item_desc_executor(itm: Item) -> Callable:
+                def item_desc_executor(curr_context: InventoryContext, parent_context: Context) -> bool:
+                    new_context_data = deepcopy(curr_context.get_context_data())
+                    item_desc_context = ItemDescriptionPage(parent_context=parent_context,
+                                                            context_data=new_context_data,
+                                                            inventory=curr_context.inventory,
+                                                            item=itm,
+                                                            currently_equipped=False)
+                    item_desc_context.enter()
+                    return False
+                return item_desc_executor
+            item_classification = scope.split(': ', maxsplit=1)[1]
+            if item_classification != 'All':
+                all_items_of_classification = self.inventory.get_all_of_classification(item_classification)
+            else:
+                all_items_of_classification = self.inventory.items_in_storage
+            for item in all_items_of_classification:
+                choice_handler.add_choice(executor=make_item_desc_executor(item),
+                                          display_text=item.get_display_name(include_stack_size=True))
         return choice_handler
 
 
