@@ -6,12 +6,22 @@ from engine.objects.equipment_loadout import EquipmentLoadout
 class Inventory:
 
     def __init__(self, equipment_loadout: EquipmentLoadout,
-                 items_in_storage: list[Item] = None):
+                 items_in_storage: list[Item] = None,
+                 gold: int = 0):
         self.items_in_storage: list[Item] = items_in_storage if items_in_storage is not None else []
         self.equipment_loadout: EquipmentLoadout = equipment_loadout
+        self.gold: int = int(gold)
 
     def get_all_stacks(self, item_id: str) -> list[Item]:
         return [item for item in self.items_in_storage if item.get_id() == item_id]
+    
+    def get_current_gold(self) -> int:
+    	return self.gold 
+    	
+    def change_gold(self, amount: int, ignore_insufficient: bool = False):
+    	if (self.get_current_gold() + int(amount) < 0) and (ignore_insufficient is False):
+    		raise ValueError('Not enough gold.')
+    	self.gold = max(0, self.gold + int(amount))
 
     def add_to_storage(self, item: Item) -> None:
         if not item.is_stackable():
