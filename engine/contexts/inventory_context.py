@@ -29,7 +29,7 @@ class InventoryContext(Context):
         # TODO: Make sure every scope is included
         scope = self.get_context_data()['scope']
         if scope == 'top':
-            self.entry_text = 'You are looking at your inventory. Choose an action below.'
+            self.entry_text = f'You are looking at your inventory. Choose an action below.\nCurrent gold: {self.inventory.get_current_gold()}'
         elif scope == 'equipment':
             self.entry_text = 'These are your currently-equipped items. Select an item to view its description or replace it.'
         elif scope == 'storage-top':
