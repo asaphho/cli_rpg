@@ -101,6 +101,8 @@ class Item:
                     max_stack_size=self.get_stack_size(),
                     weight=self.get_unit_weight(),
                     quest_item=self.is_quest_item(),
+                    consumable=self.consumable,
+                    consume_function=self.consume_function,
                     base_value=self.get_base_value(),
                     item_classification=self.get_item_classification(),
                     description=self.description)
