@@ -14,7 +14,7 @@ class Equipment(Item):
                          quest_item=quest_item, item_classification='Equipment', stack_size=stack_size,
                          base_value=base_value, max_stack_size=max_stack_size, description=description)
         self.slot = slot_name.strip()
-        self.equipment_classification = equipment_classification.lower().strip()
+        self.equipment_classification = equipment_classification.strip()
         self.tags: list[str] = [] if tags is None else tags
 
     def get_slot(self) -> str:

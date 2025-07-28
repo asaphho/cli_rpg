@@ -29,10 +29,10 @@ class Item:
         self.stackable = stackable
         self.weight = weight
         self.quest_item = quest_item
-        self.base_value = base_value
-        self.classification = item_classification.lower().strip()
-        self.stack_size = min(stack_size, max_stack_size)
-        self.max_stack_size = max_stack_size
+        self.base_value = int(base_value)
+        self.classification = item_classification.strip()
+        self.stack_size = min(int(stack_size), int(max_stack_size)) if stackable else 1
+        self.max_stack_size = max(2, int(max_stack_size)) if stackable else 1
         self.description = description
         self.consumable = consumable
         self.consume_function = consume_function
@@ -84,6 +84,8 @@ class Item:
         return max(0, original_stack_size + incoming_stack_size - self.get_max_stack_size())
 
     def remove_from_stack_return_all_gone(self, count: int, ignore_insufficient: bool = False) -> bool:
+        if not self.is_stackable():
+            raise ValueError('Cannot be stacked')
         if (count > self.get_stack_size()) and (ignore_insufficient is False):
             raise ValueError('Insufficient amount in stack.')
         self.stack_size = max(0, self.get_stack_size() - count)
@@ -93,6 +95,8 @@ class Item:
         return f'{self.get_display_name()}\n\n{self.description}\n\nWeight: {self.get_unit_weight()}\nBase value: {self.get_base_value()}'
 
     def copy_stackable(self, stack_size: int):
+        if not self.is_stackable():
+            raise ValueError('This method cannot be executed on this item.')
         return Item(item_id=self.get_id(),
                     display_name=self.get_display_name(),
                     equippable=self.is_equippable(),
