@@ -63,3 +63,26 @@ class EquipmentLoadout:
 
 	def get_slot_names(self) -> list[str]:
 		return list(self.currently_equipped.keys())
+
+	def export(self) -> dict[str, dict]:
+		exported = {}
+		for slot in self.currently_equipped:
+			item_at_slot = self.get_item(slot)
+			if item_at_slot is None:
+				exported[slot] = {'item': '', 'qty': 0}
+			else:
+				exported[slot] = {'item': item_at_slot.get_id(), 'qty': item_at_slot.get_stack_size()}
+		return exported
+
+	def import_from_data(self, data: dict[str, dict], item_id_mapping: dict[str, Equipment]) -> None:
+		self.currently_equipped = {}
+		for slot in data:
+			if (item_id := data[slot]['item']) == '':
+				self.currently_equipped[slot] = None
+			else:
+				equipment = item_id_mapping[item_id]
+				if equipment.is_stackable():
+					self.currently_equipped[slot] = equipment.copy_stackable(int(data[slot]['qty']))
+				else:
+					self.currently_equipped[slot] = equipment
+
