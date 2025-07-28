@@ -1,6 +1,7 @@
 from engine.objects.item import Item
 from engine.objects.equipment import Equipment, Weapon
 from engine.objects.equipment_loadout import EquipmentLoadout
+from typing import Union
 
 
 class Inventory:
@@ -10,18 +11,18 @@ class Inventory:
                  gold: int = 0):
         self.items_in_storage: list[Item] = items_in_storage if items_in_storage is not None else []
         self.equipment_loadout: EquipmentLoadout = equipment_loadout
-        self.gold: int = int(gold)
+        self.gold: int = max(0, int(gold))
 
     def get_all_stacks(self, item_id: str) -> list[Item]:
         return [item for item in self.items_in_storage if item.get_id() == item_id]
-    
+
     def get_current_gold(self) -> int:
-    	return self.gold 
-    	
+        return self.gold
+
     def change_gold(self, amount: int, ignore_insufficient: bool = False):
-    	if (self.get_current_gold() + int(amount) < 0) and (ignore_insufficient is False):
-    		raise ValueError('Not enough gold.')
-    	self.gold = max(0, self.gold + int(amount))
+        if (self.get_current_gold() + int(amount) < 0) and (ignore_insufficient is False):
+            raise ValueError('Not enough gold.')
+        self.gold = max(0, self.gold + int(amount))
 
     def add_to_storage(self, item: Item) -> None:
         if not item.is_stackable():
@@ -129,3 +130,24 @@ class Inventory:
 
     def get_total_carried_weight(self) -> float:
         return self.get_total_storage_weight() + self.get_total_equipped_weight()
+
+    def export(self) -> dict[str, Union[int, dict, list]]:
+        exported = {'gold': self.get_current_gold(),
+                    'equipment': self.equipment_loadout.export()}
+        stored_items = [(item.get_id(), item.get_stack_size()) for item in self.items_in_storage]
+        exported['storage'] = stored_items
+        return exported
+
+    def import_from_data(self, data: dict[str, Union[int, dict, list]],
+                         item_id_mapping: dict[str, Union[Item, Equipment]]) -> None:
+        self.gold = int(data['gold'])
+        self.equipment_loadout = EquipmentLoadout()
+        self.equipment_loadout.import_from_data(data['equipment'], item_id_mapping)
+        self.items_in_storage = []
+        for item_id, qty in data['storage']:
+            item = item_id_mapping[item_id]
+            if item.is_stackable():
+                self.add_to_storage(item.copy_stackable(int(qty)))
+            else:
+                self.add_to_storage(item)
+
