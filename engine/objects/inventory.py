@@ -150,4 +150,3 @@ class Inventory:
                 self.add_to_storage(item.copy_stackable(int(qty)))
             else:
                 self.add_to_storage(item)
-
