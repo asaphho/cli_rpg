@@ -3,19 +3,27 @@ from engine.objects.item import Item
 
 class ItemContainer:
 
-    def __init__(self, container_id: str, display_name: str, locked: bool = False, can_lockpick: bool = True, lock_difficulty: int = 0, items: list[Item] = None):
+    def __init__(self, container_id: str, display_name: str, locked: bool = False, can_lockpick: bool = True,
+                 lock_difficulty: int = 0, items: list[Item] = None, gold_contained: int = 0):
         self.container_id = container_id
         self.display_name = display_name
         self.locked = locked
         self.can_lockpick = can_lockpick
         self.items = [] if items is None else items
         self.lock_difficulty = lock_difficulty
+        self.gold_contained = max(0, int(gold_contained))
 
     def lock(self) -> None:
         self.locked = True
 
     def unlock(self) -> None:
         self.locked = False
+
+    def set_gold(self, amt: int) -> None:
+        self.gold_contained = max(0, int(amt))
+
+    def add_gold(self, amt: int) -> None:
+        self.gold_contained = max(0, self.gold_contained + int(amt))
 
     def add_item(self, item: Item) -> None:
         if item.is_stackable():
@@ -43,10 +51,3 @@ class ItemContainer:
             if stack_size < initial_amount:
                 to_add_back = initial_amount - stack_size
                 self.add_item(item.copy_stackable(to_add_back))
-
-
-
-
-
-
-
