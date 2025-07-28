@@ -4,14 +4,14 @@ from engine.objects.item import Item
 class ItemContainer:
 
     def __init__(self, container_id: str, display_name: str, locked: bool = False, can_lockpick: bool = True,
-                 lock_difficulty: int = 0, items: list[Item] = None, gold_contained: int = 0):
-        self.container_id = container_id
-        self.display_name = display_name
-        self.locked = locked
-        self.can_lockpick = can_lockpick
-        self.items = [] if items is None else items
-        self.lock_difficulty = lock_difficulty
-        self.gold_contained = max(0, int(gold_contained))
+                 lock_difficulty: int = 1, items: list[Item] = None, gold_contained: int = 0):
+        self.container_id: str = container_id
+        self.display_name: str = display_name
+        self.locked: bool = locked
+        self.can_lockpick: bool = can_lockpick
+        self.items: list[Item] = [] if items is None else items
+        self.lock_difficulty: int = max(1, int(lock_difficulty))
+        self.gold_contained: int = max(0, int(gold_contained))
 
     def lock(self) -> None:
         self.locked = True
@@ -24,6 +24,15 @@ class ItemContainer:
 
     def add_gold(self, amt: int) -> None:
         self.gold_contained = max(0, self.gold_contained + int(amt))
+
+    def set_lock_difficulty(self, new_difficulty: int) -> None:
+        self.lock_difficulty = max(1, int(new_difficulty))
+
+    def set_cannot_lockpick(self) -> None:
+        self.can_lockpick = False
+
+    def set_can_lockpick(self) -> None:
+        self.can_lockpick = True
 
     def add_item(self, item: Item) -> None:
         if item.is_stackable():
