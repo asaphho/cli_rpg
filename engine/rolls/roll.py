@@ -49,3 +49,20 @@ class Roll:
             return max(int(natural_roll_value) + self.get_bonus(), 0)
         else:
             return int(natural_roll_value) + self.get_bonus()
+
+    def get_text(self) -> str:
+        text = f'{self.n}d{self.d}'
+        bonus = self.get_bonus()
+        if bonus != 0:
+            text += f'+{bonus}' if bonus > 0 else f'{bonus}'
+        advantage = self.get_advantage()
+        if advantage != 0:
+            text += ' with advantage' if advantage == 1 else ' with disadvantage'
+        if self.floor_at_zero:
+            if self.n + bonus < 0:
+                text += ' (minimum 0)'
+        return text
+
+    def copy(self):
+        return Roll(n=self.n, d=self.d, advantage=self.get_advantage(), bonus=self.get_bonus(),
+                    floor_at_zero=self.floor_at_zero)
