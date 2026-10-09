@@ -4,6 +4,7 @@ class Context(ABC):
 
     def __init__(self, parent_context=None):
         self.parent_context = parent_context
+        self.choices: dict[str, str] = {}
 
     @abstractmethod
     def print_entry_text(self):
@@ -14,11 +15,11 @@ class Context(ABC):
         pass
 
     @abstractmethod
-    def handle_choice(self, choice) -> bool:
+    def handle_choice(self, choice: str) -> bool:
         pass
 
     @abstractmethod
-    def validate_choice(self) -> bool:
+    def generate_choices(self) -> dict[str, str]:
         pass
 
     def enter(self):
@@ -26,10 +27,11 @@ class Context(ABC):
         print('\n')
         exit_context = False
         while not exit_context:
+            self.choices = self.generate_choices()
             self.print_choices()
             print('\n')
             choice = input('Please enter your choice: ').strip()
-            if not self.validate_choice():
+            if choice not in self.choices:
                 print('Please enter a valid choice.')
                 continue
             exit_context = self.handle_choice(choice)
