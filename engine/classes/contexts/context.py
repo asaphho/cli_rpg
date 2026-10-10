@@ -23,11 +23,11 @@ class Context(ABC):
         pass
 
     def enter(self):
-        self.print_entry_text()
-        print('\n')
         exit_context = False
         while not exit_context:
+            self.print_entry_text()
             self.choices = self.generate_choices()
+            print('\n')
             self.print_choices()
             print('\n')
             choice = input('Please enter your choice: ').strip()

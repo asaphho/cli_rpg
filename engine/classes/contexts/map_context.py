@@ -8,9 +8,17 @@ class MapContext(Context):
         super().__init__(parent_context)
         self.current_node = current_location
         self.current_location = current_location
+        self.context_type = 'map'
 
     def print_entry_text(self):
-        print('Select a location to travel to.')
+        current_level = self.current_node.level
+        if current_level == 'location':
+            print('Select a location to travel to.')
+        elif current_level == 'locality':
+            region_name = self.current_node.parent.display_name
+            print(f'Places in {region_name}:')
+        else:
+            print('Regions:')
 
     def generate_choices(self) -> dict[str, str]:
         nodes_at_level = self.current_node.get_nodes_at_level()
