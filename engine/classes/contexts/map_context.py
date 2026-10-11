@@ -13,6 +13,7 @@ class MapContext(Context):
     def print_entry_text(self):
         current_level = self.current_node.level
         if current_level == 'location':
+            print(f'Locations in {self.current_node.parent.display_name}')
             print('Select a location to travel to.')
         elif current_level == 'locality':
             region_name = self.current_node.parent.display_name

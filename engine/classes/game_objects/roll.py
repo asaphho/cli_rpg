@@ -14,11 +14,11 @@ class Roll:
         self.bonus += int(amt)
 
     def add_advantage(self):
-        if self.advantage < 1:
+        if int(self.advantage) < 1:
             self.advantage += 1
 
     def add_disadvantage(self):
-        if self.advantage > -1:
+        if int(self.advantage) > -1:
             self.advantage -= 1
 
     def roll(self) -> int:
@@ -26,11 +26,11 @@ class Roll:
             return 0
         else:
             first_roll = sum([randint(1, int(self.d)) for _ in range(int(self.n))])
-            if self.advantage == 0:
+            if int(self.advantage) == 0:
                 return first_roll
             else:
                 second_roll = sum([randint(1, int(self.d)) for _ in range(int(self.n))])
-                return max(first_roll, second_roll) if self.advantage > 0 else min(first_roll, second_roll)
+                return max(first_roll, second_roll) if int(self.advantage) > 0 else min(first_roll, second_roll)
 
     def apply_minimum(self, minimum: int):
         self.minimum = int(minimum)
