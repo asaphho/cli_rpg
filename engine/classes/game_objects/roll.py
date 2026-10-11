@@ -62,9 +62,9 @@ class Roll:
                     strg += f' {int(self.bonus)}'
                 else:
                     strg += f' +{int(self.bonus)}'
-            if self.advantage == 1:
+            if int(self.advantage) == 1:
                 strg += ' with advantage'
-            elif self.advantage == -1:
+            elif int(self.advantage) == -1:
                 strg += ' with disadvantage'
             if self.minimum is not None and isinstance(self.minimum, int):
                 roll_minimum = int(self.n) + int(self.bonus)
